@@ -11,11 +11,13 @@ import java.util.Map;
  */
 public class State {
     private Map<String, List<State>> transition;
+    private List<State> epsilonMovement;
     private boolean isAccepting;
 
     public State(boolean acceptingState)
     {
         transition = new HashMap<>();
+        epsilonMovement = new ArrayList<>();
         isAccepting = acceptingState;
     }
 

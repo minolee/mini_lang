@@ -1,6 +1,7 @@
 package io;
 
 import scanner.Automata;
+import scanner.ScannerException;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
@@ -30,6 +31,10 @@ public class RegexReader {
             System.out.println(String.format("File %s does not exist", fileName));
         }
         catch (IOException e)
+        {
+            e.printStackTrace();
+        }
+        catch (ScannerException e)
         {
             e.printStackTrace();
         }
