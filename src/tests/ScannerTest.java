@@ -170,9 +170,17 @@ public class ScannerTest
     }
 
     @Test
-    public void notTest() throws ScannerException
+    public void allTest() throws ScannerException
     {
-        Automaton a = Automaton.parseLine("^(\\n)");
+        Automaton a = Automaton.parseLine(".");
+        assertTrue(a.accepts("a"));
+        assertTrue(a.accepts("8"));
+        assertTrue(a.accepts("."));
+        assertFalse(a.accepts("123"));
+
+        Automaton b = Automaton.parseLine(".*\\n");
+        assertTrue(b.accepts("asfuioaw n ruiowaenhruiwhr 9wah4rw3894hjr3wenrfjsdahnfuioahsroew\n"));
+        assertTrue(b.accepts("sajdfkwaejr 0ojw3\najskdlj\\dj28j8\n"));
     }
 
     @Test
@@ -184,7 +192,13 @@ public class ScannerTest
         assertFalse(a.accepts("1_id_start_with_num"));
         assertFalse(a.accepts("id containing spaces"));
 
-        Automaton b = Automaton.parseLine("//(^(\\n))*|/\\*.*\\*/| |\\n|\\r\\n|\\t");
+        Automaton b = Automaton.parseLine("//.*\\n|/\\*.*\\*/| |\\n|\\r\\n|\\t");
+        assertTrue(b.accepts("//we need some comments here. so this test is important\n"));
+        assertTrue(b.accepts("/*inline comments are sometimes useful*/"));
+        assertTrue(b.accepts("/*multi-line\ncomments\n*/"));
+        assertTrue(b.accepts(" "));
+        assertTrue(b.accepts("\n"));
+        assertFalse(b.accepts("//illegal comment without newline"));
 
     }
 

@@ -3,7 +3,6 @@ package scanner;
 import lombok.NonNull;
 
 import java.util.*;
-import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 /**
@@ -35,7 +34,7 @@ public class Automaton
         RegexTree regexTree = null;
         RegexOperation op;
         int readlen = 0;
-        String specialLetters = "()[]|^*\\";
+        String specialLetters = "()[]|^*.";
         int level;
         StringBuilder temp;
         switch(x[0])
@@ -95,7 +94,15 @@ public class Automaton
             case '^':
                 if(specialLetters.contains(new String(new char[]{x[1]}))) throw new ScannerException("special letter after '^'");
                 rt =  new RegexTree(RegexOperation.NOT);
-                rt.left = new RegexTree(x[1]);
+                String next = ""+x[1];
+                readlen = 2;
+                if(x[1] == '\\')
+                {
+                    if(x.length < 3) throw new ScannerException("No symbol after \\");
+                    next += x[2];
+                    readlen = 3;
+                }
+                rt.left = parseRegex(next, null);
                 if(context != null)
                 {
                     regexTree = new RegexTree(RegexOperation.CONCAT);
@@ -104,12 +111,11 @@ public class Automaton
                 }
                 else
                     regexTree = rt;
-                readlen = 2;
                 break;
             case '*':
                 if(context == null) throw new ScannerException("no preceding regex front of *");
                 RegexTree r = new RegexTree(RegexOperation.REPEAT);
-                if(context.op == RegexOperation.NONE)
+                if(context.op == RegexOperation.NONE || context.op == RegexOperation.ALL)
                 {
                     r.left = context;
                     regexTree = r;
@@ -145,6 +151,19 @@ public class Automaton
                     regexTree.right = new RegexTree(temp.substring(1, k - 1));
                 }
                 readlen = k;
+                break;
+            case '.':
+                if(context == null)
+                {
+                    regexTree = new RegexTree(RegexOperation.ALL);
+                }
+                else
+                {
+                    regexTree = new RegexTree(RegexOperation.CONCAT);
+                    regexTree.left = context;
+                    regexTree.right = new RegexTree(RegexOperation.ALL);
+                }
+                readlen = 1;
                 break;
             default:
                 if(context != null)
@@ -214,12 +233,6 @@ public class Automaton
                 left.states.forEach(result::addState);
                 right.states.forEach(result::addState);
                 break;
-            case NOT:
-                left = interpretRegexTree(tree.left);
-                left.getEndStates().forEach(state -> state.setAccepting(false));
-                start.addTransition(null, left.startState);
-
-                break;
             case REPEAT:
                 left = interpretRegexTree(tree.left);
                 start.addTransition(null, left.startState);
@@ -247,6 +260,9 @@ public class Automaton
                 left.states.forEach(result::addState);
                 right.states.forEach(result::addState);
                 start.addTransition(null, left.startState);
+                break;
+            case ALL:
+                start.addTransition(State.ANY, end);
                 break;
         }
         return result;

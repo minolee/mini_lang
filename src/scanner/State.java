@@ -13,6 +13,7 @@ import java.util.Map;
  * DFA의 개별 state
  */
 class State {
+    static final String ANY = "ANY";
     Map<String, List<State>> transition;
     List<State> epsilonMovement;
     @Getter @Setter
@@ -32,6 +33,15 @@ class State {
         if(transition.get(input) != null) transition.get(input).forEach(state -> {
             if(!result.contains(state)) result.add(state);
         });
+        if(input != null)
+        {
+            if(transition.get(ANY) != null)
+            {
+                transition.get(ANY).forEach(state -> {
+                    if(!result.contains(state)) result.add(state);
+                });
+            }
+        }
         return result;
     }
 

@@ -28,5 +28,5 @@ class RegexTree
 
 enum RegexOperation
 {
-    NONE, OR, NOT, REPEAT, PLAIN, CONCAT
+    NONE, OR, NOT, REPEAT, PLAIN, CONCAT, ALL
 }
