@@ -1,5 +1,8 @@
 package scanner;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -9,32 +12,38 @@ import java.util.Map;
  * Created by pathm on 2017-08-26.
  * DFA의 개별 state
  */
-public class State {
-    private Map<String, List<State>> transition;
-    private List<State> epsilonMovement;
-    private boolean isAccepting;
+class State {
+    Map<String, List<State>> transition;
+    List<State> epsilonMovement;
+    @Getter @Setter
+    boolean accepting;
 
-    public State(boolean acceptingState)
+    State(boolean acceptingState)
     {
         transition = new HashMap<>();
         epsilonMovement = new ArrayList<>();
-        isAccepting = acceptingState;
+        accepting = acceptingState;
     }
 
-    public List<State> transit(String input)
+    List<State> transit(String input)
     {
-        return transition.get(input);
+        List<State> result = new ArrayList<>();
+        result.addAll(epsilonMovement);
+        if(transition.get(input) != null) transition.get(input).forEach(state -> {
+            if(!result.contains(state)) result.add(state);
+        });
+        return result;
     }
 
-    public void addTransition(String key, State newState)
+    void addTransition(String key, State newState)
     {
+        if(key == null)
+        {
+            epsilonMovement.add(newState);
+            return;
+        }
         transition.putIfAbsent(key, new ArrayList<>());
         if(!transition.get(key).contains(newState))
             transition.get(key).add(newState);
-    }
-
-    public boolean isAccepting()
-    {
-        return isAccepting;
     }
 }

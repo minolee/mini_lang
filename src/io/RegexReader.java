@@ -1,6 +1,6 @@
 package io;
 
-import scanner.Automata;
+import scanner.Automaton;
 import scanner.ScannerException;
 
 import java.io.BufferedReader;
@@ -14,16 +14,16 @@ import java.util.List;
  * Created by pathm on 2017-08-26.
  */
 public class RegexReader {
-    public static List<Automata> read(String fileName)
+    public static List<Automaton> read(String fileName)
     {
-        List<Automata> result = new ArrayList<>();
+        List<Automaton> result = new ArrayList<>();
         try
         {
             BufferedReader r = new BufferedReader(new FileReader(fileName));
             String line;
             while((line = r.readLine()) != null)
             {
-                result.add(new Automata(line));
+                result.add(Automaton.parseLine(line));
             }
         }
         catch(FileNotFoundException e)

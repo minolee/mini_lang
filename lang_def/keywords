@@ -1,0 +1,51 @@
+# keywords
+IF : if
+FOR : for
+DO : do
+WHILE : while
+SWITCH : switch
+CASE : case
+DEFAULT : default
+INT : int
+FLOAT : float
+DOUBLE : double
+STRING : string
+IS : is
+AS : as
+
+#operators
+PLUS : +
+MINUS : -
+MULTIPLY : *
+DIVIDE : /
+NOT : !|not
+BITOR : |
+BITAND : &
+BITXOR : ^
+EQ : ==
+NE : !=
+GT : >
+LT : <
+GTE : >=
+LTE : <=
+AND : &&|and
+OR : \|\||or
+
+
+#brackets
+LPARENTHESE : \(
+RPARENTHESE : \)
+LSQBRACKET : \[
+RSPBRACKET : \]
+LBRACE : {
+RBRACE : }
+
+
+#id
+ID : [a-zA-Z][a-zA-Z0-9_]*
+
+#comments
+COMMENT : //(^\n)*|/\*.*\*/
+
+#ignore
+SPACES : \n|\r\n|\t
