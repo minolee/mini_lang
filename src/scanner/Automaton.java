@@ -1,7 +1,5 @@
 package scanner;
 
-import lombok.NonNull;
-
 import java.util.*;
 import java.util.function.Consumer;
 
@@ -32,9 +30,7 @@ public class Automaton
         if(line.length() == 0) return context;
         char[] x = line.toCharArray();
         RegexTree regexTree = null;
-        RegexOperation op;
         int readlen = 0;
-        String specialLetters = "()[]|^*.";
         int level;
         StringBuilder temp;
         switch(x[0])
@@ -91,31 +87,10 @@ public class Automaton
                 regexTree.left = context;
                 regexTree.right = parseRegex(line.substring(1), null);
                 return regexTree;
-            case '^':
-                if(specialLetters.contains(new String(new char[]{x[1]}))) throw new ScannerException("special letter after '^'");
-                rt =  new RegexTree(RegexOperation.NOT);
-                String next = ""+x[1];
-                readlen = 2;
-                if(x[1] == '\\')
-                {
-                    if(x.length < 3) throw new ScannerException("No symbol after \\");
-                    next += x[2];
-                    readlen = 3;
-                }
-                rt.left = parseRegex(next, null);
-                if(context != null)
-                {
-                    regexTree = new RegexTree(RegexOperation.CONCAT);
-                    regexTree.left = context;
-                    regexTree.right = rt;
-                }
-                else
-                    regexTree = rt;
-                break;
             case '*':
                 if(context == null) throw new ScannerException("no preceding regex front of *");
                 RegexTree r = new RegexTree(RegexOperation.REPEAT);
-                if(context.op == RegexOperation.NONE || context.op == RegexOperation.ALL)
+                if(context.op != RegexOperation.CONCAT)
                 {
                     r.left = context;
                     regexTree = r;
@@ -152,6 +127,9 @@ public class Automaton
                 }
                 readlen = k;
                 break;
+            case ')':
+            case ']':
+                throw new ScannerException("unhandled bracket : "+x[0]);
             case '.':
                 if(context == null)
                 {
@@ -241,7 +219,7 @@ public class Automaton
                 end.addTransition(null, start);
                 left.states.forEach(result::addState);
                 break;
-            case PLAIN:
+            case RANGE:
                 String range = parseRange(tree.range);
                 for(char x : range.toCharArray())
                 {
@@ -389,15 +367,4 @@ public class Automaton
         return false;
     }
 
-    public static void main(String[] args)
-    {
-        try
-        {
-            parseLine("simple");
-        }
-        catch (ScannerException e)
-        {
-            e.printStackTrace();
-        }
-    }
 }

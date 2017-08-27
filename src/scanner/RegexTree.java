@@ -22,11 +22,11 @@ class RegexTree
     RegexTree(String data)
     {
         this.range = data;
-        this.op = RegexOperation.PLAIN;
+        this.op = RegexOperation.RANGE;
     }
 }
 
 enum RegexOperation
 {
-    NONE, OR, NOT, REPEAT, PLAIN, CONCAT, ALL
+    NONE, OR, REPEAT, RANGE, CONCAT, ALL
 }

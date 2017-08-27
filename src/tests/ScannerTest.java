@@ -1,15 +1,15 @@
 package tests;
-import junit.framework.TestCase;
-import junit.framework.TestResult;
 import org.junit.Test;
 import scanner.Automaton;
 import scanner.ScannerException;
+
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 /**
  * Created by pathm on 2017-08-26.
+ * test cases for Regex parser
  */
 public class ScannerTest
 {
@@ -200,6 +200,28 @@ public class ScannerTest
         assertTrue(b.accepts("\n"));
         assertFalse(b.accepts("//illegal comment without newline"));
 
+        Automaton c = Automaton.parseLine("(0|1|45)*[2-3]*abc");
+        assertTrue(c.accepts("000011101010101101010110454501001450103abc"));
+        assertTrue(c.accepts("4545454545454545abc"));
+    }
+
+    @Test(expected= ScannerException.class)
+    public void illegalRegexTest() throws Exception
+    {
+        String[] testSet = new String[]{"())", "][[]", "*a", "(", "|()()()", "a|*"};
+        for(String s : testSet)
+        {
+            try
+            {
+                Automaton a = Automaton.parseLine(s);
+                throw new Exception();
+            }
+            catch(ScannerException e)
+            {
+
+            }
+        }
+        throw new ScannerException();
     }
 
 }
