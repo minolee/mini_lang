@@ -3,6 +3,8 @@ package scanner;
 import lombok.NonNull;
 
 import java.util.*;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 
 /**
  * Created by pathm on 2017-08-26.
@@ -20,71 +22,15 @@ public class Automaton
 
     public static Automaton parseLine(String line) throws ScannerException
     {
-        if(line.length() == 0)
-        {
-            Automaton result = new Automaton();
-            State s = new State(true);
-            result.addState(s, true);
-            return result;
-        }
-        RegexTree parsed = parseRegex(line, null);
-
-        Stack<Automaton> stack = new Stack<>();
-
-        for(char next : line.toCharArray())
-        {
-
-            Automaton temp = new Automaton();
-            State start = new State(false);
-            State end = new State(true);
-            temp.addState(start, true);
-            temp.addState(end);
-            switch(next)
-            {
-                case '^':
-
-                    break;
-                case '*':
-                    Automaton last = stack.pop();
-                    for(State s : last.getEndStates())
-                    {
-                        s.addTransition(null, end);
-                        s.setAccepting(false);
-                    }
-                    start.addTransition(null, end);
-                    start.addTransition(null, last.startState);
-                    end.addTransition(null, start);
-                    for(State s : last.states)
-                    {
-                        temp.addState(s);
-                    }
-                    break;
-                default:
-                    start.addTransition(new String(new char[]{next}), end);
-                    break;
-            }
-            stack.push(temp);
-        }
-
-        Automaton result = stack.pop();
-        while(!stack.empty())
-        {
-            Automaton temp = stack.pop();
-            for(State s : temp.getEndStates())
-            {
-                s.addTransition(null, result.startState);
-                s.setAccepting(false);
-            }
-            temp.states.forEach(result::addState);
-            result.startState = temp.startState;
-        }
-        return result;
-
+        RegexTree tree = parseRegex(line, null);
+        Automaton temp = interpretRegexTree(tree);
+        temp = reduce(temp);
+        return temp;
     }
 
     private static RegexTree parseRegex(String line, RegexTree context) throws ScannerException
     {
-
+        if(line.length() == 0) return context;
         char[] x = line.toCharArray();
         RegexTree regexTree = null;
         RegexOperation op;
@@ -96,24 +42,33 @@ public class Automaton
         {
             case '\\':
                 char special = x[1];
+                RegexTree rt = null;
                 switch(special)
                 {
                     case 'n':
-                        regexTree = new RegexTree('\n');
+                        rt = new RegexTree('\n');
                         break;
                     case 'r':
-                        regexTree = new RegexTree('\r');
+                        rt = new RegexTree('\r');
                         break;
                     case 't':
-                        regexTree = new RegexTree('\t');
+                        rt = new RegexTree('\t');
                         break;
                     case '\\':
-                        regexTree = new RegexTree('\\');
+                        rt = new RegexTree('\\');
                         break;
                     default:
-                        regexTree = new RegexTree(x[1]);
+                        rt = new RegexTree(x[1]);
                         break;
                 }
+                if(context != null)
+                {
+                    regexTree = new RegexTree(RegexOperation.CONCAT);
+                    regexTree.left = context;
+                    regexTree.right = rt;
+                }
+                else
+                    regexTree = rt;
                 readlen = 2;
                 break;
             case '(':
@@ -139,13 +94,33 @@ public class Automaton
                 return regexTree;
             case '^':
                 if(specialLetters.contains(new String(new char[]{x[1]}))) throw new ScannerException("special letter after '^'");
-                regexTree = new RegexTree(RegexOperation.NOT);
-                regexTree.left = new RegexTree(x[1]);
+                rt =  new RegexTree(RegexOperation.NOT);
+                rt.left = new RegexTree(x[1]);
+                if(context != null)
+                {
+                    regexTree = new RegexTree(RegexOperation.CONCAT);
+                    regexTree.left = context;
+                    regexTree.right = rt;
+                }
+                else
+                    regexTree = rt;
                 readlen = 2;
+                break;
             case '*':
                 if(context == null) throw new ScannerException("no preceding regex front of *");
-                regexTree = new RegexTree(RegexOperation.REPEAT);
-                regexTree.left = context;
+                RegexTree r = new RegexTree(RegexOperation.REPEAT);
+                if(context.op == RegexOperation.NONE)
+                {
+                    r.left = context;
+                    regexTree = r;
+                }
+                else
+                {
+                    r.left = context.right;
+                    context.right = r;
+                    regexTree = context;
+                }
+                readlen = 1;
                 break;
             case '[':
                 level = 0;
@@ -159,7 +134,16 @@ public class Automaton
                     k++;
                 }while(level > 0 && k < x.length);
                 if(level > 0) throw new ScannerException("[]");
-                regexTree = new RegexTree(temp.substring(1, k - 1));
+                if(context == null)
+                {
+                    regexTree = new RegexTree(temp.substring(1, k - 1));
+                }
+                else
+                {
+                    regexTree = new RegexTree(RegexOperation.CONCAT);
+                    regexTree.left = context;
+                    regexTree.right = new RegexTree(temp.substring(1, k - 1));
+                }
                 readlen = k;
                 break;
             default:
@@ -177,11 +161,94 @@ public class Automaton
                 break;
         }
 
-        RegexTree result = new RegexTree(RegexOperation.CONCAT);
-        RegexTree remaining = parseRegex(line.substring(readlen), regexTree);
-        result.left = regexTree;
-        result.right = parseRegex(line.substring(readlen), result);
+        return parseRegex(line.substring(readlen), regexTree);
+    }
 
+    public static String parseRange(String range) throws ScannerException
+    {
+        StringBuilder result = new StringBuilder();
+        char[] x = range.toCharArray();
+        for (int i = 0; i < x.length; i++)
+        {
+            char next = x[i];
+            if(next != '-') result.append(next);
+            else
+            {
+                char from = result.charAt(result.length() - 1);
+                char to = x[++i];
+                if(from > to) throw new ScannerException("range not match");
+                for(char c = ((char) (from + 1));c <= to;c++)
+                {
+                    result.append(c);
+                }
+            }
+        }
+        return result.toString();
+    }
+
+    private static Automaton interpretRegexTree(RegexTree tree) throws ScannerException
+    {
+        Automaton result = new Automaton();
+        State start = new State(false);
+        State end = new State(true);
+        result.addState(start, true);
+        result.addState(end);
+        Automaton left, right;
+        Consumer<State> merge = src ->
+        {
+            src.setAccepting(false);
+            src.addTransition(null, end);
+        };
+        switch (tree.op)
+        {
+            case NONE:
+                start.addTransition(new String(new char[]{tree.data}), end);
+                break;
+            case OR:
+                left = interpretRegexTree(tree.left);
+                right = interpretRegexTree(tree.right);
+                start.addTransition(null, left.startState);
+                start.addTransition(null, right.startState);
+                left.getEndStates().forEach(merge);
+                right.getEndStates().forEach(merge);
+                left.states.forEach(result::addState);
+                right.states.forEach(result::addState);
+                break;
+            case NOT:
+                left = interpretRegexTree(tree.left);
+                left.getEndStates().forEach(state -> state.setAccepting(false));
+                start.addTransition(null, left.startState);
+
+                break;
+            case REPEAT:
+                left = interpretRegexTree(tree.left);
+                start.addTransition(null, left.startState);
+                left.getEndStates().forEach(merge);
+                start.addTransition(null, end);
+                end.addTransition(null, start);
+                left.states.forEach(result::addState);
+                break;
+            case PLAIN:
+                String range = parseRange(tree.range);
+                for(char x : range.toCharArray())
+                {
+                    start.addTransition(new String(new char[]{x}), end);
+                }
+                break;
+            case CONCAT:
+                left = interpretRegexTree(tree.left);
+                right = interpretRegexTree(tree.right);
+                left.getEndStates().forEach(state ->
+                {
+                    state.setAccepting(false);
+                    state.addTransition(null, right.startState);
+                });
+                right.getEndStates().forEach(merge);
+                left.states.forEach(result::addState);
+                right.states.forEach(result::addState);
+                start.addTransition(null, left.startState);
+                break;
+        }
         return result;
     }
 
