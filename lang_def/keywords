@@ -16,11 +16,11 @@ AS : as
 #operators
 PLUS : +
 MINUS : -
-MULTIPLY : *
+MULTIPLY : \*
 DIVIDE : /
 UNARY_PLUS : +=
 UNARY_MINUS : -=
-UNARY_MULTIPLY : *=
+UNARY_MULTIPLY : \*=
 UNARY_DIVIDE : /=
 NOT : !|not
 BIT_OR : \|
@@ -38,6 +38,8 @@ LTE : <=
 AND : &&|and
 OR : \|\||or
 POWER : \^\^
+SEMICOLON : ;
+COLON : :
 
 
 #brackets

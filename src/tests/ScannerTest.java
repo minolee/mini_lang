@@ -206,7 +206,7 @@ public class ScannerTest
     }
 
     @Test(expected= ScannerException.class)
-    public void illegalRegexTest() throws Exception
+    public void illegalRegexTest() throws Exception, ScannerException
     {
         String[] testSet = new String[]{"())", "][[]", "*a", "(", "|()()()", "a|*"};
         for(String s : testSet)

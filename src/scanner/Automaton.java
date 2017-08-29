@@ -1,5 +1,8 @@
 package scanner;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import java.util.*;
 import java.util.function.Consumer;
 
@@ -11,7 +14,8 @@ public class Automaton
 {
     private List<State> states;
     private State startState;
-
+    @Getter@Setter
+    private String name;
     private Automaton()
     {
         states = new ArrayList<>();
@@ -77,18 +81,18 @@ public class Automaton
                     if(x[j] == ')' && (j == 0 || x[j - 1] != '\\')) level--;
                     j++;
                 }while(level > 0 && j < x.length);
-                if(level > 0) throw new ScannerException("()");
+                if(level > 0) throw new ScannerException(ScannerException.ExceptionType.NO_MATCHING_PAIR, "()");
                 regexTree = parseRegex(temp.substring(1, j - 1), null);
                 readlen = j;
                 break;
             case '|':
-                if(context == null) throw new ScannerException("|");
+                if(context == null) throw new ScannerException(ScannerException.ExceptionType.NO_PRECEDENCE, "|");
                 regexTree = new RegexTree(RegexOperation.OR);
                 regexTree.left = context;
                 regexTree.right = parseRegex(line.substring(1), null);
                 return regexTree;
             case '*':
-                if(context == null) throw new ScannerException("no preceding regex front of *");
+                if(context == null) throw new ScannerException(ScannerException.ExceptionType.NO_PRECEDENCE, "*");
                 RegexTree r = new RegexTree(RegexOperation.REPEAT);
                 if(context.op != RegexOperation.CONCAT)
                 {
@@ -114,7 +118,7 @@ public class Automaton
                     if(x[k] == ']' && (k == 0 || x[k - 1] != '\\')) level--;
                     k++;
                 }while(level > 0 && k < x.length);
-                if(level > 0) throw new ScannerException("[]");
+                if(level > 0) throw new ScannerException(ScannerException.ExceptionType.NO_MATCHING_PAIR, "[]");
                 if(context == null)
                 {
                     regexTree = new RegexTree(temp.substring(1, k - 1));
@@ -129,7 +133,7 @@ public class Automaton
                 break;
             case ')':
             case ']':
-                throw new ScannerException("unhandled bracket : "+x[0]);
+                throw new ScannerException(ScannerException.ExceptionType.NO_MATCHING_PAIR, new String(new char[]{x[0]}));
             case '.':
                 if(context == null)
                 {
@@ -173,7 +177,7 @@ public class Automaton
             {
                 char from = result.charAt(result.length() - 1);
                 char to = x[++i];
-                if(from > to) throw new ScannerException("range not match");
+                if(from > to) throw new ScannerException(ScannerException.ExceptionType.INVALID_RANGE, "");
                 for(char c = ((char) (from + 1));c <= to;c++)
                 {
                     result.append(c);

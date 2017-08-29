@@ -14,7 +14,7 @@ import java.util.List;
  * Created by pathm on 2017-08-26.
  */
 public class RegexReader {
-    public static List<Automaton> read(String fileName)
+    public static List<Automaton> readKeywords(String fileName)
     {
         List<Automaton> result = new ArrayList<>();
         try
@@ -23,7 +23,44 @@ public class RegexReader {
             String line;
             while((line = r.readLine()) != null)
             {
-                result.add(Automaton.parseLine(line));
+                System.out.println(line);
+                String keywordName = null;
+                String keywordRegex;
+                if(line.startsWith("#") || line.length() == 0) continue;
+                StringBuilder builder = new StringBuilder();
+                int count = 0;
+                for(char x : line.toCharArray())
+                {
+                    switch(count)
+                    {
+                        case 0:
+                            if(x != ' ') builder.append(x);
+                            else count++;
+                            break;
+                        case 1:
+                            if(x != ':') throw new ScannerException(ScannerException.ExceptionType.BLANK_IN_NAME, "");
+                            else
+                            {
+                                count++;
+                                keywordName = builder.toString();
+                                builder = new StringBuilder();
+                            }
+                            break;
+                        case 2:
+                            if(x != ' ') throw new ScannerException();
+                            else count++;
+                            break;
+                        case 3:
+                            builder.append(x);
+                            break;
+                    }
+                }
+                keywordRegex = builder.toString();
+                System.out.println(keywordName);
+                System.out.println(keywordRegex);
+                Automaton a = Automaton.parseLine(keywordRegex);
+                a.setName(keywordName);
+                result.add(a);
             }
         }
         catch(FileNotFoundException e)
