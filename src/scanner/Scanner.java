@@ -1,21 +1,66 @@
-package io;
+package scanner;
 
-import scanner.Automaton;
-import scanner.ScannerException;
+import error.ScannerException;
+import structure.Keyword;
 
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by pathm on 2017-08-26.
+ * Created by pathm on 2017-08-31.
  */
-public class RegexReader {
-    public static List<Automaton> readKeywords(String fileName)
+public class Scanner
+{
+    List<Automaton> keywords;
+
+    Scanner()
     {
+        keywords = new ArrayList<>();
+    }
+
+    public List<Keyword> scan(File file) throws IOException, ScannerException
+    {
+        BufferedReader reader = new BufferedReader(new FileReader(file));
+        String line;
+        StringBuilder buf = new StringBuilder();
+        List<Keyword> result = new ArrayList<>();
+        List<Automaton> candidates = new ArrayList<>(keywords);
+        while((line = reader.readLine()) != null)
+        {
+            if(line.length() == 0) continue;
+            char lastchar = 0;
+            candidates.forEach(Automaton::initialize);
+            for(char x : line.toCharArray())
+            {
+                final char last = lastchar;
+                if(last != 0)
+                    candidates.removeIf(a -> !a.acceptsNext(last, true));
+                lastchar = x;
+                int count = ((int) candidates.stream().filter(a -> a.acceptsNext(x, false)).count()); //실제로 빼지는 않았지만 이번 char를 거치면 없어질 것들
+                if(count == 0)
+                {
+                    candidates.removeIf(a -> !a.acceptsCurrent());
+                    Keyword k = new Keyword(candidates.get(0).getName(), true);
+
+                    if(!k.getKeyword().equals("SKIP")) result.add(k);
+                    candidates = new ArrayList<>(keywords); //다음 loop에서 이번 char를 쓴 것으로 filter될테니 없어져도 됨
+                    candidates.forEach(Automaton::initialize);
+                }
+            }
+            //후처리 - 마지막 글자
+            final char last = lastchar;
+            candidates.removeIf(a -> !a.acceptsNext(last, true));
+            Keyword k = new Keyword(candidates.get(0).getName(), true);
+            if(!k.getKeyword().equals("SKIP")) result.add(k);
+            candidates = new ArrayList<>(keywords); //다음 loop에서 이번 char를 쓴 것으로 filter될테니 없어져도 됨
+        }
+        return result;
+    }
+
+    public static Scanner readKeywords(String fileName)
+    {
+        Scanner c = new Scanner();
         List<Automaton> result = new ArrayList<>();
         try
         {
@@ -75,6 +120,7 @@ public class RegexReader {
         {
             e.printStackTrace();
         }
-        return result;
+        c.keywords = result;
+        return c;
     }
 }

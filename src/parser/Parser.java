@@ -10,6 +10,7 @@ class Parser
 {
     public static ParseTable generateTable(String grammar)
     {
+
         return null;
     }
 

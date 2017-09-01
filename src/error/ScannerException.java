@@ -1,4 +1,4 @@
-package scanner;
+package error;
 
 import lombok.Getter;
 
@@ -11,7 +11,10 @@ public class ScannerException extends Throwable{
     {
         super();
     }
-
+    public ScannerException(ExceptionType type)
+    {
+        super(type.getMsg());
+    }
     public ScannerException(ExceptionType type, String msg)
     {
         super(type.getMsg() + msg);
@@ -19,7 +22,7 @@ public class ScannerException extends Throwable{
 
     public enum ExceptionType
     {
-        BLANK_IN_NAME("Keyword name should not include blank character!"), INVALID_RANGE("Range error : "), NO_MATCHING_PAIR("No matching pair of "), NO_PRECEDENCE("No precedence of ");
+        BLANK_IN_NAME("Keyword name should not include blank character!"), INVALID_RANGE("Range error : "), NO_MATCHING_PAIR("No matching pair of "), NO_PRECEDENCE("No precedence of "), UNKNOWN("Unknown keyword!");
         @Getter
         final String msg;
         ExceptionType(String s)

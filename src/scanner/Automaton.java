@@ -1,5 +1,6 @@
 package scanner;
 
+import error.ScannerException;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -14,11 +15,64 @@ public class Automaton
 {
     private List<State> states;
     private State startState;
+    List<State> currentState;
     @Getter@Setter
     private String name;
     private Automaton()
     {
         states = new ArrayList<>();
+        currentState = new ArrayList<>();
+    }
+
+    public void initialize()
+    {
+        currentState.clear();
+        currentState.add(startState);
+    }
+
+    public boolean accepts(String text)
+    {
+        currentState.clear();
+        currentState.add(startState);
+        List<State> nextState = new ArrayList<>();
+        for(char c :text.toCharArray())
+        {
+            for(State current : currentState)
+            {
+                nextState.addAll(current.transit(new String(new char[]{c})));
+            }
+            currentState = nextState;
+            nextState = new ArrayList<>();
+        }
+        for(State s : currentState)
+        {
+            if(s.isAccepting()) return true;
+        }
+        return false;
+    }
+
+    boolean acceptsNext(char next, boolean transit)
+    {
+        List<State> nextState = new ArrayList<>();
+        for(State s : currentState)
+        {
+            nextState.addAll(s.transit(new String(new char[]{next})));
+        }
+        if(transit)
+        {
+            currentState = nextState;
+            return currentState.size() > 0;
+        }
+        return nextState.size() > 0;
+    }
+
+    boolean acceptsCurrent()
+    {
+        for(State s : currentState)
+        {
+            if(s.isAccepting()) return true;
+        }
+        return false;
     }
 
     public static Automaton parseLine(String line) throws ScannerException
@@ -82,7 +136,19 @@ public class Automaton
                     j++;
                 }while(level > 0 && j < x.length);
                 if(level > 0) throw new ScannerException(ScannerException.ExceptionType.NO_MATCHING_PAIR, "()");
-                regexTree = parseRegex(temp.substring(1, j - 1), null);
+
+
+                if(context != null)
+                {
+                    regexTree = new RegexTree(RegexOperation.CONCAT);
+                    regexTree.left = context;
+                    regexTree.right = parseRegex(temp.substring(1, j - 1), null);
+                }
+                else
+                {
+                    regexTree = new RegexTree(RegexOperation.DUMMY);
+                    regexTree.left = parseRegex(temp.substring(1, j - 1), null);
+                }
                 readlen = j;
                 break;
             case '|':
@@ -146,6 +212,34 @@ public class Automaton
                     regexTree.right = new RegexTree(RegexOperation.ALL);
                 }
                 readlen = 1;
+                break;
+            case '?':
+                if(context == null) throw new ScannerException(ScannerException.ExceptionType.NO_PRECEDENCE, "?");
+                r = new RegexTree(RegexOperation.ONCE);
+                if(context.op != RegexOperation.CONCAT)
+                {
+                    r.left = context;
+                    regexTree = r;
+                }
+                else
+                {
+                    r.left = context.right;
+                    context.right = r;
+                    regexTree = context;
+                }
+                readlen = 1;
+                break;
+            case '^':
+                String nextSubString = ""+x[1];
+                readlen = 1;
+                if(x[1] == '\\')
+                {
+                    nextSubString += x[2];
+                    readlen++;
+                }
+                r = parseRegex(nextSubString, null);
+                regexTree = new RegexTree(RegexOperation.EXCEPT);
+                regexTree.left = r;
                 break;
             default:
                 if(context != null)
@@ -245,6 +339,16 @@ public class Automaton
                 break;
             case ALL:
                 start.addTransition(State.ANY, end);
+                break;
+            case ONCE:
+                left = interpretRegexTree(tree.left);
+                start.addTransition(null, left.startState);
+                left.getEndStates().forEach(merge);
+                start.addTransition(null, end);
+                left.states.forEach(result::addState);
+                break;
+            case DUMMY:
+                result = interpretRegexTree(tree.left);
                 break;
         }
         return result;
@@ -350,25 +454,6 @@ public class Automaton
     }
 
 
-    public boolean accepts(String text)
-    {
-        List<State> currentState = new ArrayList<>();
-        currentState.add(startState);
-        List<State> nextState = new ArrayList<>();
-        for(char c :text.toCharArray())
-        {
-            for(State current : currentState)
-            {
-                nextState.addAll(current.transit(new String(new char[]{c})));
-            }
-            currentState = nextState;
-            nextState = new ArrayList<>();
-        }
-        for(State s : currentState)
-        {
-            if(s.isAccepting()) return true;
-        }
-        return false;
-    }
+
 
 }

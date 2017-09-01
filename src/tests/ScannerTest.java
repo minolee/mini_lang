@@ -1,7 +1,7 @@
 package tests;
 import org.junit.Test;
 import scanner.Automaton;
-import scanner.ScannerException;
+import error.ScannerException;
 
 
 import static org.junit.Assert.assertFalse;
@@ -203,6 +203,12 @@ public class ScannerTest
         Automaton c = Automaton.parseLine("(0|1|45)*[2-3]*abc");
         assertTrue(c.accepts("000011101010101101010110454501001450103abc"));
         assertTrue(c.accepts("4545454545454545abc"));
+        assertFalse(c.accepts("454abc"));
+
+        Automaton num = Automaton.parseLine("[0-9]*(\\.[0-9]*)?");
+        assertTrue(num.accepts("123421"));
+        assertTrue(num.accepts("123.321"));
+        assertFalse(num.accepts("123.321.123"));
     }
 
     @Test(expected= ScannerException.class)

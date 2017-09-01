@@ -1,6 +1,10 @@
-import io.RegexReader;
+import error.ScannerException;
 import scanner.Automaton;
+import scanner.Scanner;
+import structure.Keyword;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -8,10 +12,14 @@ import java.util.List;
  */
 public class Main
 {
-    static List<Automaton> keywordRecognizer;
-    static final String language_definition_dir = "lang_def/";
-    public static void main(String[] args)
+    private static final String language_definition_dir = "lang_def/";
+    private static final String test_file_dir = "testfiles/";
+    public static void main(String[] args) throws IOException, ScannerException
     {
-        keywordRecognizer = RegexReader.readKeywords(language_definition_dir + "keywords");
+        Scanner s = Scanner.readKeywords(language_definition_dir + "keywords");
+        for(Keyword word : s.scan(new File(test_file_dir+"scannerTest.ml")))
+        {
+            System.out.println(word.toString());
+        }
     }
 }
