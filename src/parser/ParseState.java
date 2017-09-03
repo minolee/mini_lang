@@ -8,16 +8,16 @@ import java.util.Map;
 /**
  * Created by pathm on 2017-08-31.
  */
-class ParseTableElement
+class ParseState
 {
-    Map<Keyword, ParseTableElement> shift;
-    Map<Keyword, ParseTableElement> reduce;
-    ParseTableElement()
+    Map<Keyword, ParseState> shift;
+    Map<Keyword, ParseState> reduce;
+    ParseState()
     {
         shift = new HashMap<>();
         reduce = new HashMap<>();
     }
-    ParseTableElement progress(Keyword keyword)
+    ParseState progress(Keyword keyword)
     {
         return null;
     }

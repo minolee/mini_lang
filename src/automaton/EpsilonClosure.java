@@ -1,18 +1,18 @@
-package scanner;
+package automaton;
 
 import java.util.List;
 
 /**
  * Created by pathm on 2017-08-27.
  */
-class EpsilonClosure extends State
+class EpsilonClosure<T> extends State<T>
 {
-    List<State> states;
+    List<State<T>> states;
 
-    EpsilonClosure(List<State> states)
+    EpsilonClosure(List<State<T>> states)
     {
         super(false);
-        for(State s: states)
+        for(State<T> s: states)
         {
             if(s.isAccepting())
             {

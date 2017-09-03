@@ -1,11 +1,9 @@
 import error.ScannerException;
-import scanner.Automaton;
 import scanner.Scanner;
 import structure.Keyword;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
 
 /**
  * Created by pathm on 2017-08-28.

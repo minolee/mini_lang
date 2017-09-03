@@ -1,6 +1,11 @@
 package parser;
 
+import structure.Keyword;
 import structure.Node;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by pathm on 2017-08-28.
@@ -8,9 +13,25 @@ import structure.Node;
  */
 class Parser
 {
-    public static ParseTable generateTable(String grammar)
+    private List<ParseState> states;
+    private ParseState currentState;
+    private List<Keyword> legalKeywords;
+    Parser()
     {
+        states = new ArrayList<>();
+        legalKeywords = new ArrayList<>();
+    }
 
+    private void addKeyword(Keyword k)
+    {
+        legalKeywords.add(k);
+    }
+
+
+
+    public static Parser generateTable(File grammarFile)
+    {
+        Parser p = new Parser();
         return null;
     }
 
@@ -19,7 +40,7 @@ class Parser
      * @param file
      * @return
      */
-    public static Node parse(String file)
+    public Node parse(String file)
     {
         return null;
     }

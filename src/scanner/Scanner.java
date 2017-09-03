@@ -1,5 +1,6 @@
 package scanner;
 
+import automaton.Automaton;
 import error.ScannerException;
 import structure.Keyword;
 

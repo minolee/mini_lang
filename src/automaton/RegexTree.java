@@ -1,20 +1,20 @@
-package scanner;
+package automaton;
 
 /**
  * Created by pathm on 2017-08-27.
  */
-class RegexTree
+class RegexTree<T>
 {
     final RegexOperation op;
-    char data;
-    RegexTree left;
-    RegexTree right;
+    T data;
+    RegexTree<T> left;
+    RegexTree<T> right;
     String range;
     RegexTree(RegexOperation op)
     {
         this.op = op;
     }
-    RegexTree(char data)
+    RegexTree(T data)
     {
         this.op = RegexOperation.NONE;
         this.data = data;
