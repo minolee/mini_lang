@@ -184,6 +184,24 @@ public class ScannerTest
     }
 
     @Test
+    public void questionMarkTest() throws ScannerException
+    {
+        Automaton a = Automaton.parseLine("a?b");
+        assertTrue(a.accepts("ab"));
+        assertTrue(a.accepts("b"));
+        assertFalse(a.accepts("aab"));
+    }
+
+    @Test
+    public void exceptTest() throws ScannerException
+    {
+        Automaton a = Automaton.parseLine("^ab");
+        assertTrue(a.accepts("bb"));
+        assertTrue(a.accepts("tb"));
+        assertFalse(a.accepts("ab"));
+    }
+
+    @Test
     public void complexTest() throws ScannerException
     {
         Automaton a = Automaton.parseLine("[a-zA-Z_][a-zA-Z0-9_]*");

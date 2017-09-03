@@ -15,14 +15,19 @@ import java.util.Map;
 class State {
     static final String ANY = "ANY";
     Map<String, List<State>> transition;
-    List<State> epsilonMovement;
+    private List<State> epsilonMovement;
+    char except;
+    List<State> exceptMovement;
     @Getter @Setter
     boolean accepting;
+    @Setter
+    boolean exceptMode;
 
     State(boolean acceptingState)
     {
         transition = new HashMap<>();
         epsilonMovement = new ArrayList<>();
+        exceptMovement = new ArrayList<>();
         accepting = acceptingState;
     }
 
@@ -41,6 +46,10 @@ class State {
                     if(!result.contains(state)) result.add(state);
                 });
             }
+            if(exceptMode && except != input.charAt(0))
+            {
+                result.addAll(exceptMovement);
+            }
         }
         return result;
     }
@@ -55,5 +64,14 @@ class State {
         transition.putIfAbsent(key, new ArrayList<>());
         if(!transition.get(key).contains(newState))
             transition.get(key).add(newState);
+    }
+    void setExceptChar(char exceptChar)
+    {
+        except = exceptChar;
+        exceptMode = true;
+    }
+    void addExceptMovement(State newState)
+    {
+        exceptMovement.add(newState);
     }
 }

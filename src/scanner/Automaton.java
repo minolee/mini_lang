@@ -231,7 +231,7 @@ public class Automaton
                 break;
             case '^':
                 String nextSubString = ""+x[1];
-                readlen = 1;
+                readlen = 2;
                 if(x[1] == '\\')
                 {
                     nextSubString += x[2];
@@ -350,6 +350,11 @@ public class Automaton
             case DUMMY:
                 result = interpretRegexTree(tree.left);
                 break;
+            case EXCEPT:
+                char exceptchar = tree.left.data;
+                start.setExceptChar(exceptchar);
+                start.addExceptMovement(end);
+                break;
         }
         return result;
     }
@@ -380,7 +385,7 @@ public class Automaton
     {
 
         //initialize
-        Map<State, EpsilonClosure> allEpsilonClosures = new HashMap<>();
+        final Map<State, EpsilonClosure> allEpsilonClosures = new HashMap<>();
         for(State s: input.states)
         {
             allEpsilonClosures.put(s, new EpsilonClosure(getEpsilonClosure(s)));
@@ -415,6 +420,15 @@ public class Automaton
                         newClosure.addTransition(in, allEpsilonClosures.get(dest));
                         nexts.add(dest);
                     }
+                }
+                if(s.exceptMode)
+                {
+                    newClosure.setExceptChar(s.except);
+                    s.exceptMovement.forEach(state -> {
+                        newClosure.addExceptMovement(allEpsilonClosures.get(state));
+                        nexts.add(state);
+                    });
+
                 }
             }
             //add closure to new automaton

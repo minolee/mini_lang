@@ -19,41 +19,73 @@ public class Scanner
         keywords = new ArrayList<>();
     }
 
-    public List<Keyword> scan(File file) throws IOException, ScannerException
+    public List<Keyword> scan(File file) throws IOException
     {
-        BufferedReader reader = new BufferedReader(new FileReader(file));
-        String line;
+        Reader reader = new BufferedReader(new FileReader(file));
+        int line;
         StringBuilder buf = new StringBuilder();
         List<Keyword> result = new ArrayList<>();
         List<Automaton> candidates = new ArrayList<>(keywords);
-        while((line = reader.readLine()) != null)
+        char lastchar = 0;
+        candidates.forEach(Automaton::initialize);
+        while((line = reader.read()) != -1)
         {
-            if(line.length() == 0) continue;
-            char lastchar = 0;
-            candidates.forEach(Automaton::initialize);
-            for(char x : line.toCharArray())
-            {
-                final char last = lastchar;
-                if(last != 0)
-                    candidates.removeIf(a -> !a.acceptsNext(last, true));
-                lastchar = x;
-                int count = ((int) candidates.stream().filter(a -> a.acceptsNext(x, false)).count()); //실제로 빼지는 않았지만 이번 char를 거치면 없어질 것들
-                if(count == 0)
-                {
-                    candidates.removeIf(a -> !a.acceptsCurrent());
-                    Keyword k = new Keyword(candidates.get(0).getName(), true);
-
-                    if(!k.getKeyword().equals("SKIP")) result.add(k);
-                    candidates = new ArrayList<>(keywords); //다음 loop에서 이번 char를 쓴 것으로 filter될테니 없어져도 됨
-                    candidates.forEach(Automaton::initialize);
-                }
-            }
-            //후처리 - 마지막 글자
+            final char x = (char)line;
+            System.out.print(x);
             final char last = lastchar;
-            candidates.removeIf(a -> !a.acceptsNext(last, true));
-            Keyword k = new Keyword(candidates.get(0).getName(), true);
-            if(!k.getKeyword().equals("SKIP")) result.add(k);
-            candidates = new ArrayList<>(keywords); //다음 loop에서 이번 char를 쓴 것으로 filter될테니 없어져도 됨
+            buf.append(last);
+            if(last != 0)
+                candidates.removeIf(a -> !a.acceptsNext(last, true));
+            lastchar = x;
+            int count = ((int) candidates.stream().filter(a -> a.acceptsNext(x, false)).count()); //실제로 빼지는 않았지만 이번 char를 거치면 없어질 것들
+            if(count == 0)
+            {
+                candidates.removeIf(a -> !a.acceptsCurrent());
+                Automaton data = candidates.get(0);
+                switch (data.getName())
+                {
+                    case "ID":
+                    case "STRING_DATA":
+                        result.add(new Keyword<>(data.getName(), true, buf.toString()));
+                        break;
+                    case "NUMBER":
+                        if(buf.toString().contains("."))
+                        {
+                            result.add(new Keyword<>(data.getName(), true, Float.parseFloat(buf.toString())));
+                        }
+                        else
+                            result.add(new Keyword<>(data.getName(), true, Integer.parseInt(buf.toString())));
+                    case "SKIP":
+                        break;
+                    default:
+                        result.add(new Keyword<>(candidates.get(0).getName(), true, null));
+                }
+                candidates = new ArrayList<>(keywords); //다음 loop에서 이번 char를 쓴 것으로 filter될테니 없어져도 됨
+                candidates.forEach(Automaton::initialize);
+                buf = new StringBuilder();
+            }
+        }
+        //후처리 - 마지막 글자
+        final char last = lastchar;
+        candidates.removeIf(a -> !a.acceptsNext(last, true));
+        Automaton data = candidates.get(0);
+        switch (data.getName())
+        {
+            case "ID":
+            case "STRING_DATA":
+                result.add(new Keyword<>(data.getName(), true, buf.toString()));
+                break;
+            case "NUMBER":
+                if(buf.toString().contains("."))
+                {
+                    result.add(new Keyword<>(data.getName(), true, Float.parseFloat(buf.toString())));
+                }
+                else
+                    result.add(new Keyword<>(data.getName(), true, Integer.parseInt(buf.toString())));
+            case "SKIP":
+                break;
+            default:
+                result.add(new Keyword<>(candidates.get(0).getName(), true, null));
         }
         return result;
     }
@@ -68,7 +100,6 @@ public class Scanner
             String line;
             while((line = r.readLine()) != null)
             {
-                System.out.println(line);
                 String keywordName = null;
                 String keywordRegex;
                 if(line.startsWith("#") || line.length() == 0) continue;
@@ -101,8 +132,6 @@ public class Scanner
                     }
                 }
                 keywordRegex = builder.toString();
-                System.out.println(keywordName);
-                System.out.println(keywordRegex);
                 Automaton a = Automaton.parseLine(keywordRegex);
                 a.setName(keywordName);
                 result.add(a);
