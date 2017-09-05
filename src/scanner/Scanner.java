@@ -1,11 +1,13 @@
 package scanner;
 
 import automaton.Automaton;
+import automaton.RegexElement;
 import error.ScannerException;
 import structure.Keyword;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 /**
@@ -13,7 +15,7 @@ import java.util.List;
  */
 public class Scanner
 {
-    List<Automaton> keywords;
+    List<Automaton<Character>> keywords;
 
     Scanner()
     {
@@ -26,7 +28,7 @@ public class Scanner
         int line;
         StringBuilder buf = new StringBuilder();
         List<Keyword> result = new ArrayList<>();
-        List<Automaton> candidates = new ArrayList<>(keywords);
+        List<Automaton<Character>> candidates = new ArrayList<>(keywords);
         char lastchar = 0;
         candidates.forEach(Automaton::initialize);
         while((line = reader.read()) != -1)
@@ -42,7 +44,7 @@ public class Scanner
             if(count == 0)
             {
                 candidates.removeIf(a -> !a.acceptsCurrent());
-                Automaton data = candidates.get(0);
+                Automaton<Character> data = candidates.get(0);
                 switch (data.getName())
                 {
                     case "ID":
@@ -69,7 +71,7 @@ public class Scanner
         //후처리 - 마지막 글자
         final char last = lastchar;
         candidates.removeIf(a -> !a.acceptsNext(last, true));
-        Automaton data = candidates.get(0);
+        Automaton<Character> data = candidates.get(0);
         switch (data.getName())
         {
             case "ID":
@@ -94,7 +96,7 @@ public class Scanner
     public static Scanner readKeywords(String fileName)
     {
         Scanner c = new Scanner();
-        List<Automaton> result = new ArrayList<>();
+        List<Automaton<Character>> result = new ArrayList<>();
         try
         {
             BufferedReader r = new BufferedReader(new FileReader(fileName));
@@ -133,7 +135,7 @@ public class Scanner
                     }
                 }
                 keywordRegex = builder.toString();
-                Automaton a = Automaton.parseLine(keywordRegex);
+                Automaton a = Automaton.parseLine(keywordRegex, Scanner::transferFunction);
                 a.setName(keywordName);
                 result.add(a);
             }
@@ -152,5 +154,51 @@ public class Scanner
         }
         c.keywords = result;
         return c;
+    }
+
+    public static List<RegexElement<Character>> transferFunction(String line)
+    {
+        List<RegexElement<Character>> result = new ArrayList<>();
+        char[] x = line.toCharArray();
+        for (int i = 0; i < x.length; i++)
+        {
+            switch(x[i])
+            {
+                case '\\':
+                    switch(x[i+1])
+                    {
+                        case 'n':
+                            result.add(new RegexElement<>('\n'));
+                            break;
+                        case 'r':
+                            result.add(new RegexElement<>('\r'));
+                            break;
+                        case 't':
+                            result.add(new RegexElement<>('\r'));
+                            break;
+                        case '\\':
+                            result.add(new RegexElement<>('\\'));
+                            break;
+                        default:
+                            result.add(new RegexElement<>(x[i + 1]));
+                            break;
+                    }
+                    i++;
+                    break;
+                case '(':
+                case ')':
+                case '.':
+                case '^':
+                case '|':
+                case '*':
+                case '?':
+                    result.add(new RegexElement<>(x[i], true));
+                    break;
+                default:
+                    result.add(new RegexElement<>(x[i]));
+                    break;
+            }
+        }
+        return result;
     }
 }

@@ -95,36 +95,36 @@ public class Automaton<T>
         {
             switch (line.get(0).command)
             {
-                case '\\':
-                    char special = x[1];
-                    RegexTree<T> rt = null;
-                    switch (special)
-                    {
-                        case 'n':
-                            rt = new RegexTree<>('\n');
-                            break;
-                        case 'r':
-                            rt = new RegexTree<>('\r');
-                            break;
-                        case 't':
-                            rt = new RegexTree<>('\t');
-                            break;
-                        case '\\':
-                            rt = new RegexTree<>('\\');
-                            break;
-                        default:
-                            rt = new RegexTree(x[1]);
-                            break;
-                    }
-                    if (context != null)
-                    {
-                        regexTree = new RegexTree<>(RegexOperation.CONCAT);
-                        regexTree.left = context;
-                        regexTree.right = rt;
-                    } else
-                        regexTree = rt;
-                    readlen = 2;
-                    break;
+//                case '\\':
+//                    char special = x[1];
+//                    RegexTree<T> rt = null;
+//                    switch (special)
+//                    {
+//                        case 'n':
+//                            rt = new RegexTree<>('\n');
+//                            break;
+//                        case 'r':
+//                            rt = new RegexTree<>('\r');
+//                            break;
+//                        case 't':
+//                            rt = new RegexTree<>('\t');
+//                            break;
+//                        case '\\':
+//                            rt = new RegexTree<>('\\');
+//                            break;
+//                        default:
+//                            rt = new RegexTree(x[1]);
+//                            break;
+//                    }
+//                    if (context != null)
+//                    {
+//                        regexTree = new RegexTree<>(RegexOperation.CONCAT);
+//                        regexTree.left = context;
+//                        regexTree.right = rt;
+//                    } else
+//                        regexTree = rt;
+//                    readlen = 2;
+//                    break;
                 case '(':
                     level = 0;
                     temp = new ArrayList<>();
@@ -172,32 +172,8 @@ public class Automaton<T>
                     }
                     readlen = 1;
                     break;
-                case '[':
-                    level = 0;
-                    temp = new ArrayList<>();
-                    int k = 0;
-                    do
-                    {
-                        temp.append(x[k]);
-                        if (x[k] == '[' && (k == 0 || x[k - 1] != '\\')) level++;
-                        if (x[k] == ']' && (k == 0 || x[k - 1] != '\\')) level--;
-                        k++;
-                    } while (level > 0 && k < x.length);
-                    if (level > 0) throw new ScannerException(ScannerException.ExceptionType.NO_MATCHING_PAIR, "[]");
-                    if (context == null)
-                    {
-                        regexTree = new RegexTree<>(temp.substring(1, k - 1));
-                    } else
-                    {
-                        regexTree = new RegexTree<>(RegexOperation.CONCAT);
-                        regexTree.left = context;
-                        regexTree.right = new RegexTree<>(temp.substring(1, k - 1));
-                    }
-                    readlen = k;
-                    break;
                 case ')':
-                case ']':
-                    throw new ScannerException(ScannerException.ExceptionType.NO_MATCHING_PAIR, new String(new char[]{x[0]}));
+                    throw new ScannerException(ScannerException.ExceptionType.NO_MATCHING_PAIR, new String(new char[]{line.get(0).command}));
                 case '.':
                     if (context == null)
                     {
@@ -226,30 +202,28 @@ public class Automaton<T>
                     readlen = 1;
                     break;
                 case '^':
-                    String nextSubString = "" + x[1];
-                    readlen = 2;
-                    if (x[1] == '\\')
-                    {
-                        nextSubString += x[2];
-                        readlen++;
-                    }
-                    r = parseRegex(nextSubString, null);
+                    r = parseRegex(line.subList(1, 2), null);
                     regexTree = new RegexTree<>(RegexOperation.EXCEPT);
                     regexTree.left = r;
+                    readlen = 2;
                     break;
                 default:
-                    if (context != null)
-                    {
-                        regexTree = new RegexTree<>(RegexOperation.CONCAT);
-                        regexTree.left = context;
-                        regexTree.right = new RegexTree<>(x[0]);
-                    } else
-                    {
-                        regexTree = new RegexTree<>(x[0]);
-                    }
-                    readlen = 1;
+
                     break;
             }
+        }
+        else
+        {
+            if (context != null)
+            {
+                regexTree = new RegexTree<>(RegexOperation.CONCAT);
+                regexTree.left = context;
+                regexTree.right = new RegexTree<>(line.get(0).data);
+            } else
+            {
+                regexTree = new RegexTree<>(line.get(0).data);
+            }
+            readlen = 1;
         }
 
         return parseRegex(line.subList(readlen, line.size()), regexTree);
@@ -313,13 +287,6 @@ public class Automaton<T>
                 end.addTransition(null, start);
                 left.states.forEach(result::addState);
                 break;
-            case RANGE:
-                String range = parseRange(tree.range);
-                for(char x : range.toCharArray())
-                {
-                    start.addTransition(new String(new char[]{x}), end);
-                }
-                break;
             case CONCAT:
                 left = interpretRegexTree(tree.left);
                 right = interpretRegexTree(tree.right);
@@ -334,7 +301,7 @@ public class Automaton<T>
                 start.addTransition(null, left.startState);
                 break;
             case ALL:
-                start.addTransition(State.ANY, end);
+                start.addAnyMovement(end);
                 break;
             case ONCE:
                 left = interpretRegexTree(tree.left);
@@ -347,8 +314,8 @@ public class Automaton<T>
                 result = interpretRegexTree(tree.left);
                 break;
             case EXCEPT:
-                char exceptchar = tree.left.data;
-                start.setExceptChar(exceptchar);
+                T exceptchar = tree.left.data;
+                start.setExceptInput(exceptchar);
                 start.addExceptMovement(end);
                 break;
         }
@@ -418,14 +385,18 @@ public class Automaton<T>
                         nexts.add(dest);
                     }
                 }
+                s.anyMovement.forEach(state -> {
+                    newClosure.addAnyMovement(allEpsilonClosures.get(state));
+                    nexts.add(state);
+                });
+
                 if(s.exceptMode)
                 {
-                    newClosure.setExceptChar(s.except);
+                    newClosure.setExceptInput(s.except);
                     s.exceptMovement.forEach(state -> {
                         newClosure.addExceptMovement(allEpsilonClosures.get(state));
                         nexts.add(state);
                     });
-
                 }
             }
             //add closure to new automaton

@@ -16,7 +16,8 @@ class State<T> {
     static final String ANY = "ANY";
     Map<T, List<State<T>>> transition;
     private List<State<T>> epsilonMovement;
-    char except;
+    List<State<T>> anyMovement;
+    T except;
     List<State<T>> exceptMovement;
     @Getter @Setter
     boolean accepting;
@@ -28,6 +29,7 @@ class State<T> {
         transition = new HashMap<>();
         epsilonMovement = new ArrayList<>();
         exceptMovement = new ArrayList<>();
+        anyMovement = new ArrayList<>();
         accepting = acceptingState;
     }
 
@@ -40,18 +42,13 @@ class State<T> {
         });
         if(input != null)
         {
-            if(input instanceof String && transition.get(ANY) != null)
+            anyMovement.forEach(state -> {
+                if(!result.contains(state)) result.add(state);
+            });
+
+            if(exceptMode && except != input)
             {
-                transition.get(ANY).forEach(state -> {
-                    if(!result.contains(state)) result.add(state);
-                });
-            }
-            if(input instanceof String)
-            {
-                if(exceptMode && except != ((String)input).charAt(0))
-                {
-                    result.addAll(exceptMovement);
-                }
+                result.addAll(exceptMovement);
             }
 
         }
@@ -69,7 +66,12 @@ class State<T> {
         if(!transition.get(key).contains(newState))
             transition.get(key).add(newState);
     }
-    void setExceptChar(char exceptChar)
+
+    void addAnyMovement(State<T> state)
+    {
+        anyMovement.add(state);
+    }
+    void setExceptInput(T exceptChar)
     {
         except = exceptChar;
         exceptMode = true;

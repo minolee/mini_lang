@@ -14,7 +14,7 @@ public class RegexElement<T>
         this.command = 0;
         this.commandMode = false;
     }
-    public RegexElement(char command)
+    public RegexElement(char command, boolean flag) //T가 char면 이리로 올 때 문제가 생겨서 더미 플래그 넣음
     {
         this.data = null;
         this.command = command;
