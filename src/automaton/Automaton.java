@@ -84,7 +84,7 @@ public class Automaton<T>
         return temp;
     }
 
-    private static <T> RegexTree<T> parseRegex(List<RegexElement<T>> line, RegexTree<T> context) throws ScannerException
+    public static <T> RegexTree<T> parseRegex(List<RegexElement<T>> line, RegexTree<T> context) throws ScannerException
     {
         if(line.size() == 0) return context;
         RegexTree<T> regexTree = null;
@@ -144,7 +144,8 @@ public class Automaton<T>
                         regexTree = new RegexTree<>(RegexOperation.CONCAT);
                         regexTree.left = context;
                         regexTree.right = parseRegex(temp.subList(1, j - 1), null);
-                    } else
+                    }
+                    else
                     {
                         regexTree = new RegexTree<>(RegexOperation.DUMMY);
                         regexTree.left = parseRegex(temp.subList(1, j - 1), null);

@@ -12,6 +12,7 @@ FLOAT : float
 STRING : string
 IS : is
 AS : as
+RETURN : return
 
 #operators
 PLUS : +

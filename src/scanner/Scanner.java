@@ -139,6 +139,7 @@ public class Scanner
                 a.setName(keywordName);
                 result.add(a);
             }
+            r.close();
         }
         catch(FileNotFoundException e)
         {

@@ -9,17 +9,17 @@ import java.util.List;
  * Created by pathm on 2017-09-04.
  * LR(1) item
  */
-class Item
+class Item extends ParseElement
 {
-    final Keyword lhs;
-    final List<Keyword> rhs;
+
     final int position;
     final Keyword lookahead;
-    Item(Keyword lhs, int position, Keyword lookahead)
+    Item(ParseElement elem, int pos, Keyword lookahead)
     {
-        this.lhs = lhs;
-        this.rhs = new ArrayList<>();
-        this.position = position;
+        super(elem);
+        position = pos;
         this.lookahead = lookahead;
     }
+
+
 }

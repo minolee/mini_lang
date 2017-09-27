@@ -5,4 +5,5 @@ package automaton;
  */
 public enum RegexOperation
 {
+    NONE, OR, REPEAT, RANGE, CONCAT, ALL, ONCE, DUMMY, EXCEPT
 }

@@ -3,12 +3,13 @@ package automaton;
 /**
  * Created by pathm on 2017-08-27.
  */
-class RegexTree<T>
+public class RegexTree<T>
 {
-    final RegexOperation op;
-    T data;
-    RegexTree<T> left;
-    RegexTree<T> right;
+
+    public final RegexOperation op;
+    public T data;
+    public RegexTree<T> left;
+    public RegexTree<T> right;
     String range;
     RegexTree(RegexOperation op)
     {
@@ -26,7 +27,3 @@ class RegexTree<T>
     }
 }
 
-enum RegexOperation
-{
-    NONE, OR, REPEAT, RANGE, CONCAT, ALL, ONCE, DUMMY, EXCEPT
-}

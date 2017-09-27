@@ -1,4 +1,6 @@
+import error.ParseException;
 import error.ScannerException;
+import parser.Parser;
 import scanner.Scanner;
 import structure.Keyword;
 
@@ -12,12 +14,14 @@ public class Main
 {
     private static final String language_definition_dir = "lang_def/";
     private static final String test_file_dir = "testfiles/";
-    public static void main(String[] args) throws IOException, ScannerException
+    public static void main(String[] args) throws IOException, ScannerException, ParseException
     {
         Scanner s = Scanner.readKeywords(language_definition_dir + "keywords");
         for(Keyword word : s.scan(new File(test_file_dir+"scannerTest.ml")))
         {
             System.out.println(word.toString());
         }
+        Parser p = Parser.generateParser(new File(language_definition_dir+"grammar"));
+        p.parse("asdf");
     }
 }
