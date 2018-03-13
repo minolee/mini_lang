@@ -13,5 +13,6 @@
     <orderEntry type="library" name="lombok" level="project" />
     <orderEntry type="library" name="junit-4.12" level="project" />
     <orderEntry type="library" name="KotlinJavaRuntime" level="project" />
+    <orderEntry type="library" name="lombok" level="project" />
   </component>
 </module>
