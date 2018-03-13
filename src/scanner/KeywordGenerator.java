@@ -20,7 +20,7 @@ public class KeywordGenerator
 		}
 	}
 
-	public static Function<String, Keyword> NUM = (s -> new Keyword("NUMBER", true, Integer.parseInt(s)));
+	public static Function<String, Keyword> NUM = (s -> new Keyword<Integer>("NUMBER", true, Integer.parseInt(s)));
 	
 
 }
