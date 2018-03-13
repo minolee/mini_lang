@@ -423,6 +423,7 @@ public class Automaton<T>
     }
 
 
+
     public static <T>Automaton<T> reduce(Automaton<T> input)
     {
         return removeEpsilonMovement(input);
