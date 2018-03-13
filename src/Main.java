@@ -1,6 +1,8 @@
 import error.ParseException;
 import error.ScannerException;
+import parser.Parser;
 import scanner.Scanner;
+import structure.Keyword;
 
 import java.io.File;
 import java.io.IOException;

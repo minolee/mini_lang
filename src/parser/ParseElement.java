@@ -1,5 +1,7 @@
 package parser;
 
+import structure.Keyword;
+
 import java.util.ArrayList;
 import java.util.List;
 

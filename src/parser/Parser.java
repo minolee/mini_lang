@@ -6,9 +6,11 @@ import automaton.RegexOperation;
 import automaton.RegexTree;
 import error.ParseException;
 import error.ScannerException;
+import structure.Keyword;
 import structure.Node;
 
 import java.io.*;
+import java.security.Key;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
