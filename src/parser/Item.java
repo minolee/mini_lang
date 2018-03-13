@@ -1,10 +1,5 @@
 package parser;
 
-import structure.Keyword;
-
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * Created by pathm on 2017-09-04.
  * LR(1) item

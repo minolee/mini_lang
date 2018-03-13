@@ -1,7 +1,5 @@
 package parser;
 
-import structure.Keyword;
-
 import java.util.HashMap;
 import java.util.Map;
 
