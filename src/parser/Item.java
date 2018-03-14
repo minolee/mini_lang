@@ -52,6 +52,14 @@ public class Item extends ProductionRule
     }
 
     @Override
+    public boolean equals(Object o)
+    {
+        if( o == null) return false;
+        if(!(o instanceof  Item)) return false;
+        Item other = ((Item) o);
+        return other.name.equals(name) && other.position == position && other.rhs.equals(rhs);
+    }
+    @Override
 	public int hashCode()
     {
     	return (super.hashCode() ^ lookahead.hashCode()) + position;

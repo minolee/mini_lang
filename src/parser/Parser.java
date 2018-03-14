@@ -25,7 +25,7 @@ public class Parser
 	private final List<Keyword> legalKeywords;
 	private final Map<String, Keyword> keywordDict;
 	@Getter
-	private final List<Partition> partitions;
+	private final Set<Partition> partitions;
 	private Map<Keyword, Integer> tempCount = new HashMap<>();
 
 	private Parser()
@@ -34,7 +34,7 @@ public class Parser
 		keywordDict = new HashMap<>();
 		grammar = new HashMap<>();
 		firstSet = new HashMap<>();
-		partitions = new ArrayList<>();
+		partitions = new HashSet<>();
 	}
 
 	/**
@@ -399,9 +399,11 @@ public class Parser
         return result;
     }
 
-    private Set<Keyword> getFollow(Keyword k)
+    private Set<Keyword> getFollow(Item i)
     {
-        return null;
+        //TODO
+        Keyword follow = i.rhs.size() > i.position + 1 ? null : i.rhs.get(i.position+1);
+        return firstSet.get(follow);
     }
 
 	/**
@@ -412,11 +414,11 @@ public class Parser
 	private void generateItems() throws ParseException
 	{
 		List<Partition> queue = new ArrayList<>();
-		Partition initial = generatePartition(Arrays.asList(new Item(grammar.get(keywordDict.get("PROGRAM")).get(0), Keyword.EOF)));
-		queue.add(initial);
+		queue.add(generatePartition(Arrays.asList(new Item(grammar.get(keywordDict.get("PROGRAM")).get(0), Keyword.EOF))));
 		while(queue.size() > 0)
 		{
 			Partition currentSet = queue.remove(0);
+			if(partitions.contains(currentSet)) continue;
 			partitions.add(currentSet);
 			Set<Keyword> next = new HashSet<>();
 			//transition 후보들을 얻어옴
@@ -444,14 +446,8 @@ public class Parser
 				{
 
 					Partition newPartition = generatePartition(generateSet);
-					for(Item item : newPartition.getItems())
-					{
-						if(currentSet.getItems().contains(item))
-						{
-							throw new ParseException(ParseException.ExceptionType.AMBIGUOUS_GRAMMAR, item.toString());
-						}
-					}
 					currentSet.getShift().put(transitionWord, newPartition);
+                    if(queue.contains(newPartition) || partitions.contains(newPartition)) continue;
 					queue.add(newPartition);
 				}
 			}
@@ -466,13 +462,14 @@ public class Parser
 		while (queue.size() > 0)
 		{
 			current = queue.remove(0);
+			if(current.rhs.size() == 0) continue;
 			result.add(current);
 			Keyword next = current.getNext();
 			if(next != null && !next.isTerminal())
 			{
 				for (ProductionRule rule : grammar.get(next))
 				{
-					Item i = new Item(rule, current.lookahead);
+					Item i = rule.rhs.size() > 0 ? new Item(rule, current.lookahead) : current.nextItem();
 					queue.add(i);
 				}
 			}
@@ -486,7 +483,12 @@ public class Parser
 //				}
 //			}
 		}
-		return new Partition(result);
+		Partition p = new Partition(result);
+		for(Partition pp : partitions)
+        {
+            if (pp.equals(p)) return pp;
+        }
+        return p;
 	}
 
 
@@ -502,9 +504,10 @@ public class Parser
 	 * @param file source code
 	 * @return root node
 	 */
-	public Node parse(String file, scanner.Scanner scanner)
-	{
-		return null;
+	public Node parse(File file, scanner.Scanner scanner) throws IOException
+    {
+		List<Keyword> keywordSequence = scanner.scan(file);
+        return null;
 	}
 
 

@@ -20,10 +20,10 @@ public class Main
     {
 	    System.out.println((Arrays.asList("abc").hashCode() == Arrays.asList("abc").hashCode()));
 	    Scanner s = Scanner.readKeywords(language_definition_dir + minilang_prefix + "keywords");
-        for(Keyword word : s.scan(new File(test_file_dir+ minilang_prefix + "scannerTest.ml")))
-        {
-            System.out.println(word.toString());
-        }
+//        for(Keyword word : s.scan(new File(test_file_dir+ minilang_prefix + "scannerTest.ml")))
+//        {
+//            System.out.println(word.toString());
+//        }
         Parser p = Parser.GenerateParser(new File(language_definition_dir+minilang_prefix+"grammar"));
         p.getPartitions().forEach(System.out::println);
 //        p.grammar.forEach((k, v) ->
@@ -33,7 +33,7 @@ public class Main
 //				System.out.println(pe);
 //			}
 //		});
-        p.parse("asdf", s);
+//        p.parse("asdf", s);
 
     }
 }

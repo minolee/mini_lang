@@ -15,4 +15,12 @@ class Partition internal constructor(items : Collection<Item>) {
         items.forEach {builder.append(it)}
         return builder.toString()
     }
+
+    override fun equals(other: Any?): Boolean {
+        if( other === this) return true
+        if(other?.javaClass != this.javaClass) return false
+        other as Partition
+        return items == other.items
+    }
+    override fun hashCode() = items.hashCode()
 }
