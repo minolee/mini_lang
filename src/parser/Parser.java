@@ -18,8 +18,9 @@ import java.util.*;
  */
 public class Parser
 {
-	public final Map<Keyword, List<ParseElement>> grammar;
+	public final Map<Keyword, List<ProductionRule>> grammar;
 	private final List<Keyword> legalKeywords;
+	private final List<Item> items;
 	private final Map<String, Keyword> keywordDict;
 	private List<ParseState> states;
 	private ParseState currentState;
@@ -29,6 +30,7 @@ public class Parser
 	private Parser()
 	{
 		states = new ArrayList<>();
+		items = new ArrayList<>();
 		legalKeywords = new ArrayList<>();
 		keywordDict = new HashMap<>();
 		grammar = new HashMap<>();
@@ -36,6 +38,7 @@ public class Parser
 
 	/**
 	 * grammar file input을 받아서 grammar를 가진 parser를 만들어준다.
+	 *
 	 * @param grammarFile grammar file
 	 * @return parser with grammar
 	 * @throws IOException
@@ -57,16 +60,17 @@ public class Parser
 			RegexTree<Keyword> rhs = Automaton.parseRegex(p.translateFunction(x[1]), null);
 			Keyword key = p.keywordDict.get(lhs);
 			List<List<Keyword>> simpleForm = p.translateToSimpleForm(rhs);
-			List<ParseElement> elements = new ArrayList<>();
+			List<ProductionRule> elements = new ArrayList<>();
 			for (List<Keyword> element : simpleForm)
 			{
-				elements.add(new ParseElement(key, true, element));
+				elements.add(new ProductionRule(key, true, element));
 			}
 
 			p.grammar.put(p.keywordDict.get(lhs), elements);
 			p.mergeDuplicateGrammar();
 		}
 
+		p.generateItems();
 		return p;
 	}
 
@@ -220,7 +224,7 @@ public class Parser
 		List<List<Keyword>> elements = new ArrayList<>(); //result
 		List<List<Keyword>> left, right;
 		List<Keyword> temp = new ArrayList<>();
-		List<ParseElement> elems;
+		List<ProductionRule> elems;
 		int reusecount;
 		String surface;
 		switch (keywords.op)
@@ -259,7 +263,7 @@ public class Parser
 				elems = new ArrayList<>();
 				for (List<Keyword> rhs : left)
 				{
-					elems.add(new ParseElement(k, false, rhs));
+					elems.add(new ProductionRule(k, false, rhs));
 				}
 				grammar.put(k, elems);
 				temp.add(k);
@@ -297,7 +301,7 @@ public class Parser
 				elems = new ArrayList<>();
 				for (List<Keyword> rhs : left)
 				{
-					elems.add(new ParseElement(k, false, rhs));
+					elems.add(new ProductionRule(k, false, rhs));
 				}
 				grammar.put(k, elems);
 				temp.add(k);
@@ -314,7 +318,7 @@ public class Parser
 
 	private void mergeDuplicateGrammar()
 	{
-		Map<Keyword, List<ParseElement>> temp = new HashMap<>();
+		Map<Keyword, List<ProductionRule>> temp = new HashMap<>();
 		Map<Keyword, Keyword> redirection = new HashMap<>();
 		Keyword redirect = null;
 		for (Keyword k1 : grammar.keySet())
@@ -335,11 +339,35 @@ public class Parser
 				continue;
 			}
 			redirection.put(k1, redirect);
-			System.out.println(String.format("%s is same with %s", k1, redirect));
 		}
-		temp.forEach((k, l) -> l.forEach(p ->p.rhs.replaceAll(k1 -> redirection.getOrDefault(k1, k1))));
+		temp.forEach((k, l) -> l.forEach(p -> p.rhs.replaceAll(k1 -> redirection.getOrDefault(k1, k1))));
 		grammar.clear();
 		grammar.putAll(temp);
+	}
+
+	private void generateParseTable()
+	{
+		Item head = items.get(0);
+		boolean end = false;
+	}
+
+	private void generateItems()
+	{
+		items.add(new Item(grammar.get(keywordDict.get("PROGRAM")).get(0), 0));
+		grammar.forEach((k, l) -> l.forEach(Item::GenerateItemFromProductionRule));
+	}
+
+	private List<Item> generateClosure(Item item, List<Item> items)
+	{
+		List<Item> result = new ArrayList<>();
+		boolean end = false;
+		Item current = item;
+		while(!end)
+		{
+			result.add(current);
+			//TODO
+		}
+		return null;
 	}
 
 
@@ -349,14 +377,19 @@ public class Parser
 	//Parsing related functions//
 	/////////////////////////////
 
-	private void generateItems() throws ParseException
+	/**
+	 * 프로그램을 parse하여 하나의 node tree로 만든다.
+	 *
+	 * @param file source code
+	 * @return root node
+	 */
+	public Node parse(String file, scanner.Scanner scanner)
 	{
-		List<Item> items = new ArrayList<>();
-		Map<Keyword, List<Keyword>> lookaheads = new HashMap<>(legalKeywords.size());
-		for (Keyword keyword : legalKeywords)
-			lookaheads.put(keyword, new ArrayList<>());
-		lookaheads.get(keywordDict.get("PROGRAM")).add(Keyword.EOF);
+		return null;
 	}
+
+
+
 
 	private void feed(Keyword k)
 	{
@@ -373,14 +406,5 @@ public class Parser
 
 	}
 
-	/**
-	 * 프로그램을 parse하여 하나의 node tree로 만든다.
-	 *
-	 * @param file
-	 * @return
-	 */
-	public Node parse(String file)
-	{
-		return null;
-	}
+
 }

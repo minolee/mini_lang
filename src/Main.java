@@ -1,9 +1,8 @@
 import error.ParseException;
 import error.ScannerException;
-import parser.ParseElement;
+import parser.ProductionRule;
 import parser.Parser;
 import scanner.Scanner;
-import structure.Keyword;
 
 import java.io.File;
 import java.io.IOException;
@@ -18,7 +17,7 @@ public class Main
     private static final String minilang_prefix = "minilang_";
     public static void main(String[] args) throws IOException, ScannerException, ParseException
     {
-//        Scanner s = Scanner.readKeywords(language_definition_dir + minilang_prefix + "keywords");
+        Scanner s = Scanner.readKeywords(language_definition_dir + minilang_prefix + "keywords");
 //        for(Keyword word : s.scan(new File(test_file_dir+ minilang_prefix + "scannerTest.ml")))
 //        {
 //            System.out.println(word.toString());
@@ -26,12 +25,12 @@ public class Main
         Parser p = Parser.generateParser(new File(language_definition_dir+minilang_prefix+"grammar"));
         p.grammar.forEach((k, v) ->
 		{
-			for(ParseElement pe : v)
+			for(ProductionRule pe : v)
 			{
 				System.out.println(pe);
 			}
 		});
-        p.parse("asdf");
+        p.parse("asdf", s);
 
     }
 }

@@ -9,20 +9,20 @@ import java.util.List;
  * Created by pathm on 2017-09-11.
  * 임시 public
  */
-public class ParseElement
+public class ProductionRule
 {
-	final boolean visible;
+	private final boolean visible;
 	final List<Keyword> rhs;
-	Keyword name;
+	private final Keyword name;
 
-	ParseElement(Keyword name, boolean visible, List<Keyword> rhs)
+	ProductionRule(Keyword name, boolean visible, List<Keyword> rhs)
 	{
 		this.name = name;
 		this.visible = visible;
 		this.rhs = rhs;
 	}
 
-	ParseElement(ParseElement elem)
+	ProductionRule(ProductionRule elem)
 	{
 		this.name = elem.name;
 		this.visible = elem.visible;
@@ -44,8 +44,8 @@ public class ParseElement
 	public boolean equals(Object o)
 	{
 		if (this == o) return true;
-		if (!( o instanceof ParseElement )) return false;
-		ParseElement elem = ( (ParseElement) o );
+		if (!( o instanceof ProductionRule )) return false;
+		ProductionRule elem = ( (ProductionRule) o );
 		if (rhs.size() != elem.rhs.size()) return false;
 		for (int i = 0; i < rhs.size(); i++)
 		{
