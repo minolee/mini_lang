@@ -9,22 +9,53 @@ import java.util.List;
  * Created by pathm on 2017-09-04.
  * LR(1) item
  */
-class Item extends ProductionRule
+public class Item extends ProductionRule
 {
     final int position;
-    Item(ProductionRule elem, int pos) //special rule(EOF)를 위해 package-private로 남겨둠
+    final Keyword lookahead;
+    Item(ProductionRule elem, Keyword lookahead) //special rule(EOF)를 위해 package-private로 남겨둠
     {
         super(elem);
-        position = pos;
+        position = 0;
+        this.lookahead = lookahead;
     }
 
-    public static List<Item> GenerateItemFromProductionRule(ProductionRule rule)
+    private Item(Item elem)
     {
-		List<Item> result = new ArrayList<>();
-		for (int i = 0; i <= rule.rhs.size(); i++)
-		{
-			result.add(new Item(rule, i)); // 맨 마지막까지 들어가야 함
-		}
-		return result;
+    	super(elem);
+
+    	position = elem.position + 1;
+    	lookahead = elem.lookahead;
     }
+
+    public Item nextItem()
+    {
+    	return new Item(this);
+    }
+
+    public Keyword getNext()
+    {
+    	return rhs.size() > position ? rhs.get(position) : null;
+    }
+
+    @Override
+    public String toString()
+    {
+    	StringBuilder builder = new StringBuilder(name.toString() + " -> ");
+	    for (int i = 0; i < rhs.size(); i++)
+	    {
+	    	if(i == position) builder.append("*");
+		    builder.append(rhs.get(i));
+	    }
+	    if(rhs.size() == position) builder.append("*");
+	    return builder.toString();
+    }
+
+    @Override
+	public int hashCode()
+    {
+    	return super.hashCode()+position;
+    }
+
+
 }

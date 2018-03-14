@@ -10,6 +10,11 @@ public class ParseException extends Exception
         super(type.msg);
     }
 
+    public ParseException(ExceptionType type, String additionalMsg)
+    {
+    	super(type.msg + ": "+additionalMsg);
+    }
+
     public enum ExceptionType
     {
         AMBIGUOUS_GRAMMAR("Grammar is ambiguous"), ILLEGAL_GRAMMAR("Illegal grammar file");

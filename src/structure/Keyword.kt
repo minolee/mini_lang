@@ -42,6 +42,10 @@ class Keyword constructor(val keyword: String, val isTerminal: Boolean)
         return other.keyword == keyword && other.keywordType == keywordType
     }
 
+    override fun hashCode(): Int {
+        return keyword.hashCode() xor keywordType.hashCode()
+    }
+
 
 
 }

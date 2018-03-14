@@ -9,11 +9,11 @@ import java.util.List;
  * Created by pathm on 2017-09-11.
  * 임시 public
  */
-public class ProductionRule
+class ProductionRule
 {
 	private final boolean visible;
 	final List<Keyword> rhs;
-	private final Keyword name;
+	final Keyword name;
 
 	ProductionRule(Keyword name, boolean visible, List<Keyword> rhs)
 	{
@@ -52,5 +52,16 @@ public class ProductionRule
 			if(!rhs.get(i).equals(elem.rhs.get(i))) return false;
 		}
 		return true;
+	}
+
+	@Override
+	public int hashCode()
+	{
+		int result = name.hashCode();
+		for(Keyword k : rhs)
+		{
+			result ^= k.hashCode();
+		}
+		return result;
 	}
 }

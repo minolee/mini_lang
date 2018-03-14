@@ -6,11 +6,13 @@ import automaton.RegexOperation;
 import automaton.RegexTree;
 import error.ParseException;
 import error.ScannerException;
+import lombok.Getter;
 import structure.Keyword;
 import structure.Node;
 
 import java.io.*;
 import java.util.*;
+import java.util.List;
 
 /**
  * Created by pathm on 2017-08-28.
@@ -18,14 +20,15 @@ import java.util.*;
  */
 public class Parser
 {
-	public final Map<Keyword, List<ProductionRule>> grammar;
+	private final Map<Keyword, List<ProductionRule>> grammar;
 	private final List<Keyword> legalKeywords;
 	private final List<Item> items;
 	private final Map<String, Keyword> keywordDict;
 	private List<ParseState> states;
+	@Getter
+	private final List<Partition> partitions;
 	private ParseState currentState;
 	private Map<Keyword, Integer> tempCount = new HashMap<>();
-	private int tempKeywordCount = 0;
 
 	private Parser()
 	{
@@ -34,6 +37,7 @@ public class Parser
 		legalKeywords = new ArrayList<>();
 		keywordDict = new HashMap<>();
 		grammar = new HashMap<>();
+		partitions = new ArrayList<>();
 	}
 
 	/**
@@ -45,14 +49,14 @@ public class Parser
 	 * @throws ParseException
 	 * @throws ScannerException
 	 */
-	public static Parser generateParser(File grammarFile) throws IOException, ParseException, ScannerException
+	public static Parser GenerateParser(File grammarFile) throws IOException, ParseException, ScannerException
 	{
 		Parser p = new Parser();
 		p.generateKeywords(grammarFile);
 		List<RegexTree<Keyword>> grammars = new ArrayList<>();
 		BufferedReader reader = new BufferedReader(new FileReader(grammarFile));
 		String line;
-		while (( line = reader.readLine() ) != null)
+		while ((line = reader.readLine()) != null)
 		{
 			if (line.startsWith("#") || line.length() == 0) continue;
 			String[] x = line.split(" : ");
@@ -84,7 +88,7 @@ public class Parser
 		BufferedReader reader = new BufferedReader(new FileReader(grammarFile));
 		String line;
 		Map<String, Keyword> nonTerminals = new HashMap<>();
-		while (( line = reader.readLine() ) != null)
+		while ((line = reader.readLine()) != null)
 		{
 			if (line.startsWith("#")) continue;
 			String key = null;
@@ -230,7 +234,7 @@ public class Parser
 		switch (keywords.op)
 		{
 			case NONE:
-				temp.add(keywordDict.get(( keywords.data.getKeyword() )));
+				temp.add(keywordDict.get((keywords.data.getKeyword())));
 				elements.add(temp);
 				break;
 			case OR:
@@ -351,23 +355,89 @@ public class Parser
 		boolean end = false;
 	}
 
-	private void generateItems()
+	/**
+	 * item list를 만든다. grammar가 확정된 이후 items에 가능한 모든 item을 저장한다.
+	 * 사실 필요한건지 잘 모르겠다... 그냥 item set에서 순차적으로 만드는게 낫지 않을까?
+	 *
+	 */
+	private void generateItems() throws ParseException
 	{
-		items.add(new Item(grammar.get(keywordDict.get("PROGRAM")).get(0), 0));
-		grammar.forEach((k, l) -> l.forEach(Item::GenerateItemFromProductionRule));
+		List<Partition> queue = new ArrayList<>();
+		Partition initial = generatePartition(Arrays.asList(new Item(grammar.get(keywordDict.get("PROGRAM")).get(0), Keyword.EOF)));
+		queue.add(initial);
+		while(queue.size() > 0)
+		{
+			Partition currentSet = queue.remove(0);
+			partitions.add(currentSet);
+			Set<Keyword> next = new HashSet<>();
+			//transition 후보들을 얻어옴
+			for(Item item : currentSet.getItems())
+			{
+				Keyword k = item.getNext();
+				if (k != null) next.add(k);
+			}
+
+			//각각의 후보에 대해 transition된 item을 만들고, 그 item을 새로운 partition으로 만듬
+
+			for(Keyword transitionWord : next)
+			{
+				//일단 해당 keyword로 transition될 모든 item을 모은다
+				Set<Item> generateSet = new HashSet<>();
+				for (Item item : currentSet.getItems())
+				{
+					if (item.getNext() != null && item.getNext().equals(transitionWord))
+					{
+						generateSet.add(item.nextItem());
+					}
+				}
+
+				if(generateSet.size() > 0)
+				{
+
+					Partition newPartition = generatePartition(generateSet);
+					for(Item item : newPartition.getItems())
+					{
+						if(currentSet.getItems().contains(item))
+						{
+							throw new ParseException(ParseException.ExceptionType.AMBIGUOUS_GRAMMAR, item.toString());
+						}
+					}
+					currentSet.getShift().put(transitionWord, newPartition);
+					queue.add(newPartition);
+				}
+			}
+		}
 	}
 
-	private List<Item> generateClosure(Item item, List<Item> items)
+	private Partition generatePartition(Collection<Item> item)
 	{
-		List<Item> result = new ArrayList<>();
-		boolean end = false;
-		Item current = item;
-		while(!end)
+		Set<Item> result = new HashSet<>();
+		List<Item> queue = new ArrayList<>(item);
+		Item current;
+		while (queue.size() > 0)
 		{
+			current = queue.remove(0);
 			result.add(current);
-			//TODO
+			Keyword next = current.getNext();
+			if(next != null && !next.isTerminal())
+			{
+				for (ProductionRule rule : grammar.get(next))
+				{
+					Item i = new Item(rule, current.lookahead);
+					queue.add(i);
+				}
+			}
+//			for (ProductionRule rule : grammar.get(current.name))
+//			{
+//				//get right after keyword, and if it is non-terminal, add new item to partition
+//				if(rule.rhs.size() > 0 && !rule.rhs.get(current.position).isTerminal())
+//				{
+//					Item i = new Item(rule, 0);
+//					queue.add(i);
+//				}
+//			}
 		}
-		return null;
+		return new Partition(result);
 	}
 
 
@@ -389,8 +459,6 @@ public class Parser
 	}
 
 
-
-
 	private void feed(Keyword k)
 	{
 
@@ -405,6 +473,4 @@ public class Parser
 	{
 
 	}
-
-
 }
