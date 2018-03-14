@@ -21,22 +21,19 @@ import java.util.List;
 public class Parser
 {
 	private final Map<Keyword, List<ProductionRule>> grammar;
+	private final Map<Keyword, Set<Keyword>> firstSet;
 	private final List<Keyword> legalKeywords;
-	private final List<Item> items;
 	private final Map<String, Keyword> keywordDict;
-	private List<ParseState> states;
 	@Getter
 	private final List<Partition> partitions;
-	private ParseState currentState;
 	private Map<Keyword, Integer> tempCount = new HashMap<>();
 
 	private Parser()
 	{
-		states = new ArrayList<>();
-		items = new ArrayList<>();
 		legalKeywords = new ArrayList<>();
 		keywordDict = new HashMap<>();
 		grammar = new HashMap<>();
+		firstSet = new HashMap<>();
 		partitions = new ArrayList<>();
 	}
 
@@ -72,8 +69,10 @@ public class Parser
 
 			p.grammar.put(p.keywordDict.get(lhs), elements);
 			p.mergeDuplicateGrammar();
-		}
 
+		}
+        p.tempCount = null;
+        p.generateFirstSet();
 		p.generateItems();
 		return p;
 	}
@@ -349,11 +348,61 @@ public class Parser
 		grammar.putAll(temp);
 	}
 
-	private void generateParseTable()
-	{
-		Item head = items.get(0);
-		boolean end = false;
-	}
+	private void generateFirstSet()
+    {
+        grammar.keySet().forEach(k -> firstSet.put(k, getFirst(k)));
+    }
+
+    private Set<Keyword> getFirst(Keyword k)
+    {
+        Set<Keyword> result = new HashSet<>();
+        FirstSetParseTree parent = null;
+        List<FirstSetParseTree> queue = new ArrayList<>();
+        grammar.get(k).forEach(p -> queue.add(new FirstSetParseTree(p, null, 0)));
+        while(queue.size() > 0)
+        {
+            FirstSetParseTree current = queue.remove(0);
+            Keyword first = current.getNext();
+            if(first == null)
+            {
+                if(current.parent == null)
+                {
+                    result.add(Keyword.EPSILON);
+                    continue;
+                }
+                if(current.parent.parent == null) continue;
+                queue.add(0, new FirstSetParseTree(current.parent.rule, current.parent.parent, current.parent.startIndex + 1));
+                continue;
+            }
+            if(first.isTerminal()) result.add(first);
+            else
+            {
+                for (ProductionRule p : grammar.get(first))
+                {
+                    queue.add(new FirstSetParseTree(p, current, 0));
+                }
+            }
+//            for(ProductionRule p : grammar.get(current.rule.name))
+//            {
+//                Keyword first = p.rhs.size() > 0 ? p.rhs.get(0) : null;
+//                if(first == null)
+//                {
+//                    continue;
+//                }
+//                if(first.isTerminal()) result.add(first);
+//                else
+//                {
+//                    queue.add(new FirstSetParseTree(first, parent));
+//                }
+//            }
+        }
+        return result;
+    }
+
+    private Set<Keyword> getFollow(Keyword k)
+    {
+        return null;
+    }
 
 	/**
 	 * item list를 만든다. grammar가 확정된 이후 items에 가능한 모든 item을 저장한다.
@@ -473,4 +522,25 @@ public class Parser
 	{
 
 	}
+    //first set을 만들기 위한 일회용 class
+	private class FirstSetParseTree
+    {
+        ProductionRule rule;
+        FirstSetParseTree parent;
+        List<FirstSetParseTree> children;
+        int startIndex;
+        private FirstSetParseTree(ProductionRule rule, FirstSetParseTree parent, int startIndex)
+        {
+            this.rule = rule;
+            this.parent = parent;
+            this.children = new ArrayList<>();
+            this.startIndex = startIndex;
+            if(parent != null) parent.children.add(this);
+        }
+
+        private Keyword getNext()
+        {
+            return rule.rhs.size() > startIndex ? rule.rhs.get(startIndex) : null;
+        }
+    }
 }

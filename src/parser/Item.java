@@ -54,7 +54,7 @@ public class Item extends ProductionRule
     @Override
 	public int hashCode()
     {
-    	return super.hashCode()+position;
+    	return (super.hashCode() ^ lookahead.hashCode()) + position;
     }
 
 

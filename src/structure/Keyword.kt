@@ -9,6 +9,7 @@ class Keyword constructor(val keyword: String, val isTerminal: Boolean)
     companion object
     {
         @JvmField val EOF = Keyword("eof", true)
+        @JvmField val EPSILON = Keyword("epsilon", true)
     }
     constructor(keyword: String, isTerminal: Boolean, value: String) : this(keyword, isTerminal)
     {

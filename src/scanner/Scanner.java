@@ -87,7 +87,7 @@ public class Scanner
             case "SKIP":
                 break;
             default:
-                result.add(new Keyword(candidates.get(0).getName(), true, null));
+                result.add(new Keyword(candidates.get(0).getName(), true));
         }
         return result;
     }
