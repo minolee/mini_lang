@@ -1,5 +1,7 @@
 package parser;
 
+import structure.Keyword;
+
 /**
  * Created by pathm on 2017-09-04.
  * LR(1) item

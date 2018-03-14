@@ -60,7 +60,7 @@ public class Scanner
                     case "SKIP":
                         break;
                     default:
-                        result.add(new Keyword(candidates.get(0).getName(), true, null));
+                        result.add(new Keyword(candidates.get(0).getName(), true));
                 }
                 candidates = new ArrayList<>(keywords); //다음 loop에서 이번 char를 쓴 것으로 filter될테니 없어져도 됨
                 candidates.forEach(Automaton::initialize);
