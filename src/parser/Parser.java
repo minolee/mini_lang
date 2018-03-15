@@ -8,7 +8,6 @@ import error.ParseException;
 import error.ScannerException;
 import lombok.Getter;
 import structure.Keyword;
-import structure.Node;
 
 import java.io.*;
 import java.util.*;
@@ -26,6 +25,7 @@ public class Parser
 	private final Map<String, Keyword> keywordDict;
 	@Getter
 	private final Set<Partition> partitions;
+	private Partition root;
 	private Map<Keyword, Integer> tempCount = new HashMap<>();
 
 	private Parser()
@@ -72,8 +72,8 @@ public class Parser
 
 		}
         p.tempCount = null;
-        p.generateFirstSet();
-		p.generateItems();
+//        p.generateFirstSet();
+		p.generateTable();
 		return p;
 	}
 
@@ -87,6 +87,7 @@ public class Parser
 		BufferedReader reader = new BufferedReader(new FileReader(grammarFile));
 		String line;
 		Map<String, Keyword> nonTerminals = new HashMap<>();
+		keywordDict.put("<EOF>", Keyword.EOF);
 		while ((line = reader.readLine()) != null)
 		{
 			if (line.startsWith("#")) continue;
@@ -179,7 +180,7 @@ public class Parser
 	private List<RegexElement<Keyword>> translateFunction(String line)
 	{
 		char[] x = line.toCharArray();
-		StringBuilder buf = new StringBuilder();
+		StringBuilder buf;
 		List<RegexElement<Keyword>> result = new ArrayList<>();
 		for (int i = 0; i < x.length; i++)
 		{
@@ -242,34 +243,35 @@ public class Parser
 				break;
 			case REPEAT:
 				/*  A -> C* 를 다음과 같이 변환
-				 *  A -> C'
-				 *  C'-> CC' | e
+				 *  A -> C' | e
+				 *  C'-> CC' | C
 				 */
 				if (keywords.left.op != RegexOperation.NONE)
 					throw new ParseException(ParseException.ExceptionType.ILLEGAL_GRAMMAR);
 
 				surface = keywords.left.data.getKeyword();
 				reusecount = tempCount.get(keywordDict.get(surface));
-				String s = String.format("%s:%d", surface, reusecount);// C'
+				String s = String.format("%s:%d", surface, reusecount);
 				tempCount.put(keywordDict.get(surface), reusecount + 1);
 
-				Keyword k = new Keyword(s, false);
+				Keyword k = new Keyword(s, false);// C'
 				keywordDict.put(s, k);
 				legalKeywords.add(k);
 
 				left = translateToSimpleForm(keywords.left); // C
 				for (List<Keyword> rhs : left)
 				{
-					rhs.add(k);
+					rhs.add(k);// CC'
 				}
-				left.add(new ArrayList<>());//epsilon
 				elems = new ArrayList<>();
+				translateToSimpleForm(keywords.left).forEach(k1 ->elems.add(new ProductionRule(k, false, k1)));
 				for (List<Keyword> rhs : left)
 				{
 					elems.add(new ProductionRule(k, false, rhs));
 				}
 				grammar.put(k, elems);
 				temp.add(k);
+				elements.add(new ArrayList<>());
 				elements.add(temp);
 				break;
 			case CONCAT:
@@ -285,32 +287,22 @@ public class Parser
 				break;
 			case ONCE:
 				/* A -> B? 를 다음과 같이 변경
-				 * A -> B'
-				 * B'-> B | e
+				 * A -> B | e
 				 */
 				if (keywords.left.op != RegexOperation.NONE)
 					throw new ParseException(ParseException.ExceptionType.ILLEGAL_GRAMMAR);
-				surface = keywords.left.data.getKeyword();
-				reusecount = tempCount.get(keywordDict.get(surface));
 
-				s = String.format("%s:%d", surface, reusecount);// C'
-				tempCount.put(keywordDict.get(surface), reusecount + 1);
-				k = new Keyword(s, false);
-				keywordDict.put(s, k);
-
-				legalKeywords.add(k);
-				left = translateToSimpleForm(keywords.left); // C
-				left.add(new ArrayList<>());//epsilon
+				left = translateToSimpleForm(keywords.left); // B
 				elems = new ArrayList<>();
-				for (List<Keyword> rhs : left)
+				for(List<Keyword> l : left)
 				{
-					elems.add(new ProductionRule(k, false, rhs));
+					elems.add(new ProductionRule(keywords.left.data, true, l));
 				}
-				grammar.put(k, elems);
-				temp.add(k);
+				grammar.put(keywords.left.data, elems);
+				elements.add(new ArrayList<>());
 				elements.add(temp);
 				break;
-			case DUMMY:
+			case DUMMY: //()
 				elements = translateToSimpleForm(keywords.left);
 				break;
 			default:
@@ -411,13 +403,20 @@ public class Parser
 	 * 사실 필요한건지 잘 모르겠다... 그냥 item set에서 순차적으로 만드는게 낫지 않을까?
 	 *
 	 */
-	private void generateItems() throws ParseException
+	private void generateTable()
 	{
 		List<Partition> queue = new ArrayList<>();
 		queue.add(generatePartition(Arrays.asList(new Item(grammar.get(keywordDict.get("PROGRAM")).get(0), Keyword.EOF))));
+		boolean init = false;
 		while(queue.size() > 0)
 		{
 			Partition currentSet = queue.remove(0);
+			if(!init)
+			{
+				root = currentSet;
+				init = true;
+			}
+
 			if(partitions.contains(currentSet)) continue;
 			partitions.add(currentSet);
 			Set<Keyword> next = new HashSet<>();
@@ -504,28 +503,16 @@ public class Parser
 	 * @param file source code
 	 * @return root node
 	 */
-	public Node parse(File file, scanner.Scanner scanner) throws IOException
+	public void parse(File file, scanner.Scanner scanner) throws IOException
     {
 		List<Keyword> keywordSequence = scanner.scan(file);
-        return null;
+        keywordSequence.add(Keyword.EOF);
+        ParseState initial = new ParseState(root);
+        keywordSequence.forEach(initial::feed);
 	}
 
-
-	private void feed(Keyword k)
-	{
-
-	}
-
-	private void shift()
-	{
-
-	}
-
-	private void reduce()
-	{
-
-	}
     //first set을 만들기 위한 일회용 class
+	//지금은 first set을 안 만들기 때문에 필요없음
 	private class FirstSetParseTree
     {
         ProductionRule rule;
@@ -546,4 +533,6 @@ public class Parser
             return rule.rhs.size() > startIndex ? rule.rhs.get(startIndex) : null;
         }
     }
+
+
 }

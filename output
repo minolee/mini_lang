@@ -1,57 +1,18 @@
-[CASE_LIST:0] -> [CASE_LIST]
-[CASE_LIST:0] -> 
-[DO_EXPR] -> <DO>[CASE_LIST:0]<END_DO>
-[LHS_LIST] -> [ID_LIST]
-[EXPR6_] -> <GT>[EXPR8][EXPR6_:3]
-[EXPR6_] -> <LT>[EXPR8][EXPR6_:3]
-[EXPR6_] -> <GTE>[EXPR8][EXPR6_:3]
-[EXPR6_] -> <LTE>[EXPR8][EXPR6_:3]
-[MINUS:0] -> <MINUS>
-[MINUS:0] -> 
-[CASE_LIST] -> [CASE][CASE_LIST_:0]
-[EXPR5] -> [EXPR6][EXPR5_:2]
-[EXPR8_:1] -> [EXPR8_]
-[EXPR8_:1] -> 
-[EXPR9_:2] -> [EXPR9_]
-[EXPR9_:2] -> 
-[EXPR8] -> [EXPR9][EXPR8_:1]
-[PROGRAM] -> [SENTENCE:0]
-[IF_EXPR] -> <IF>[CASE_LIST:0]<END_IF>
-[EXPR9_] -> <MULTIPLY>[EXPR10][EXPR9_:2]
-[EXPR9_] -> <DIVIDE>[EXPR10][EXPR9_:2]
-[EXPR9_] -> <REMAINDER>[EXPR10][EXPR9_:2]
-[EXPR9] -> [EXPR10][EXPR9_:2]
-[SEQUENCE_EXPR_] -> <SEQUENCE>[EXPR]
-[SENTENCE:0] -> [SENTENCE][SENTENCE:0]
-[SENTENCE:0] -> 
-[EXPR8_] -> <PLUS>[EXPR9][EXPR8_:1]
-[EXPR8_] -> <MINUS>[EXPR9][EXPR8_:1]
-[COMPOUND_EXPR] -> [CONCURRENT_EXPR]
-[COMPOUND_EXPR] -> [SEQUENCE_EXPR]
-[COMPOUND_EXPR] -> [EXPR]
-[COMPOUND_EXPR] -> <_SKIP>
-[COMPOUND_EXPR] -> <ABORT>
-[EXPR6_:3] -> [EXPR6_]
-[EXPR6_:3] -> 
-[SENTENCE] -> [SENTENCE_]<END_SENTENCE>
-[SENTENCE_] -> [DO_EXPR]
-[SENTENCE_] -> [IF_EXPR]
-[SENTENCE_] -> [COMPOUND_EXPR]
-[CONCURRENT_EXPR] -> [LHS_LIST]<ASSIGN>[RHS_LIST]
-[EXPR10] -> [MINUS:0][BASE_CASE]
-[EXPR5_:2] -> [EXPR5_]
-[EXPR5_:2] -> 
-[SEQUENCE_EXPR_:0] -> [SEQUENCE_EXPR_][SEQUENCE_EXPR_:0]
-[SEQUENCE_EXPR_:0] -> 
-[CASE_LIST_:0] -> [CASE_LIST_][CASE_LIST_:0]
-[CASE_LIST_:0] -> 
-[EXPR6] -> [EXPR8][EXPR6_:3]
-[EXPR] -> [EXPR5]
-[CASE] -> [EXPR]<THEN>[EXPR]
-[SEQUENCE_EXPR] -> [EXPR][SEQUENCE_EXPR_:0]
-[EXPR5_] -> <EQ>[EXPR6][EXPR5_:2]
-[EXPR5_] -> <NE>[EXPR6][EXPR5_:2]
-[BASE_CASE] -> <LPARENTHESE>[EXPR]<RPARENTHESE>
-[BASE_CASE] -> <ID>
-[BASE_CASE] -> <NUMBER>
-[CASE_LIST_] -> <SEP>[CASE_LIST:0]
+true
+[PROGRAM] -> <EOF><eof>*
+[PROGRAM] -> <EOF>*<eof>
+[PROGRAM] -> *<EOF><eof>
+skip | do od
+abort | if fi
+x1, x2, xn := e1, e2, en
+expr1; expr2
+if (1 > 2) -> 3 * 4 | b2 -> sl2 | b3 ->2*3 fi
+do b1 -> sl1 | b2 -> sl2 | b3 ->sl3 od
+print(b1)Exception in thread "main" java.util.EmptyStackException
+	at java.base/java.util.Stack.peek(Stack.java:102)
+	at java.base/java.util.Stack.pop(Stack.java:84)
+	at parser.ParseState.shift(ParseState.java:32)
+	at parser.ParseState.feed(ParseState.java:19)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1380)
+	at parser.Parser.parse(Parser.java:511)
+	at Main.main(Main.java:36)

@@ -33,7 +33,7 @@ public class Main
 //				System.out.println(pe);
 //			}
 //		});
-//        p.parse("asdf", s);
+        p.parse(new File(test_file_dir+minilang_prefix+"parserTest.ml"), s);
 
     }
 }

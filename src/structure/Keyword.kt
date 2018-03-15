@@ -1,7 +1,14 @@
 package structure
 
-class Keyword constructor(val keyword: String, val isTerminal: Boolean)
+class Keyword : ProgramNode
 {
+    constructor(keyword: String, isTerminal: Boolean)
+    {
+        this.keyword = keyword
+        this.isTerminal = isTerminal
+    }
+    val keyword: String
+    val isTerminal: Boolean
     var strValue: String? = null
     var intValue: Int? = null
     var floatValue: Float? = null
