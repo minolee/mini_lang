@@ -21,7 +21,7 @@ public class Parser
 {
 	private final Map<Keyword, List<ProductionRule>> grammar;
 	private final Map<Keyword, Set<Keyword>> firstSet;
-	private final List<Keyword> legalKeywords;
+	private final Map<Keyword, Set<Keyword>> followSet;
 	private final Map<String, Keyword> keywordDict;
 	@Getter
 	private final Set<Partition> partitions;
@@ -30,10 +30,10 @@ public class Parser
 
 	private Parser()
 	{
-		legalKeywords = new ArrayList<>();
 		keywordDict = new HashMap<>();
 		grammar = new HashMap<>();
 		firstSet = new HashMap<>();
+		followSet = new HashMap<>();
 		partitions = new HashSet<>();
 	}
 
@@ -53,7 +53,7 @@ public class Parser
 		List<RegexTree<Keyword>> grammars = new ArrayList<>();
 		BufferedReader reader = new BufferedReader(new FileReader(grammarFile));
 		String line;
-		while ((line = reader.readLine()) != null)
+		while (( line = reader.readLine() ) != null)
 		{
 			if (line.startsWith("#") || line.length() == 0) continue;
 			String[] x = line.split(" : ");
@@ -69,11 +69,14 @@ public class Parser
 
 			p.grammar.put(p.keywordDict.get(lhs), elements);
 			p.mergeDuplicateGrammar();
-
 		}
-        p.tempCount = null;
-//        p.generateFirstSet();
+		//cleanup
+		p.tempCount = null;
+		reader.close();
+
+		//after parsing grammar
 		p.generateTable();
+
 		return p;
 	}
 
@@ -88,7 +91,7 @@ public class Parser
 		String line;
 		Map<String, Keyword> nonTerminals = new HashMap<>();
 		keywordDict.put("<EOF>", Keyword.EOF);
-		while ((line = reader.readLine()) != null)
+		while (( line = reader.readLine() ) != null)
 		{
 			if (line.startsWith("#")) continue;
 			String key = null;
@@ -226,7 +229,7 @@ public class Parser
 	private List<List<Keyword>> translateToSimpleForm(RegexTree<Keyword> keywords) throws ParseException
 	{
 		List<List<Keyword>> elements = new ArrayList<>(); //result
-		List<List<Keyword>> left, right;
+		List<List<Keyword>> left;
 		List<Keyword> temp = new ArrayList<>();
 		List<ProductionRule> elems;
 		int reusecount;
@@ -234,7 +237,7 @@ public class Parser
 		switch (keywords.op)
 		{
 			case NONE:
-				temp.add(keywordDict.get((keywords.data.getKeyword())));
+				temp.add(keywordDict.get(( keywords.data.getKeyword() )));
 				elements.add(temp);
 				break;
 			case OR:
@@ -256,7 +259,6 @@ public class Parser
 
 				Keyword k = new Keyword(s, false);// C'
 				keywordDict.put(s, k);
-				legalKeywords.add(k);
 
 				left = translateToSimpleForm(keywords.left); // C
 				for (List<Keyword> rhs : left)
@@ -264,7 +266,7 @@ public class Parser
 					rhs.add(k);// CC'
 				}
 				elems = new ArrayList<>();
-				translateToSimpleForm(keywords.left).forEach(k1 ->elems.add(new ProductionRule(k, false, k1)));
+				translateToSimpleForm(keywords.left).forEach(k1 -> elems.add(new ProductionRule(k, false, k1)));
 				for (List<Keyword> rhs : left)
 				{
 					elems.add(new ProductionRule(k, false, rhs));
@@ -294,7 +296,7 @@ public class Parser
 
 				left = translateToSimpleForm(keywords.left); // B
 				elems = new ArrayList<>();
-				for(List<Keyword> l : left)
+				for (List<Keyword> l : left)
 				{
 					elems.add(new ProductionRule(keywords.left.data, true, l));
 				}
@@ -341,39 +343,39 @@ public class Parser
 	}
 
 	private void generateFirstSet()
-    {
-        grammar.keySet().forEach(k -> firstSet.put(k, getFirst(k)));
-    }
+	{
+		grammar.keySet().forEach(k -> firstSet.put(k, getFirst(k)));
+	}
 
-    private Set<Keyword> getFirst(Keyword k)
-    {
-        Set<Keyword> result = new HashSet<>();
-        FirstSetParseTree parent = null;
-        List<FirstSetParseTree> queue = new ArrayList<>();
-        grammar.get(k).forEach(p -> queue.add(new FirstSetParseTree(p, null, 0)));
-        while(queue.size() > 0)
-        {
-            FirstSetParseTree current = queue.remove(0);
-            Keyword first = current.getNext();
-            if(first == null)
-            {
-                if(current.parent == null)
-                {
-                    result.add(Keyword.EPSILON);
-                    continue;
-                }
-                if(current.parent.parent == null) continue;
-                queue.add(0, new FirstSetParseTree(current.parent.rule, current.parent.parent, current.parent.startIndex + 1));
-                continue;
-            }
-            if(first.isTerminal()) result.add(first);
-            else
-            {
-                for (ProductionRule p : grammar.get(first))
-                {
-                    queue.add(new FirstSetParseTree(p, current, 0));
-                }
-            }
+	private Set<Keyword> getFirst(Keyword k)
+	{
+		Set<Keyword> result = new HashSet<>();
+		FirstSetParseTree parent = null;
+		List<FirstSetParseTree> queue = new ArrayList<>();
+		grammar.get(k).forEach(p -> queue.add(new FirstSetParseTree(p, null, 0)));
+		while (queue.size() > 0)
+		{
+			FirstSetParseTree current = queue.remove(0);
+			Keyword first = current.getNext();
+			if (first == null)
+			{
+				if (current.parent == null)
+				{
+					result.add(Keyword.EPSILON);
+					continue;
+				}
+				if (current.parent.parent == null) continue;
+				queue.add(0, new FirstSetParseTree(current.parent.rule, current.parent.parent, current.parent.startIndex + 1));
+				continue;
+			}
+			if (first.isTerminal()) result.add(first);
+			else
+			{
+				for (ProductionRule p : grammar.get(first))
+				{
+					queue.add(new FirstSetParseTree(p, current, 0));
+				}
+			}
 //            for(ProductionRule p : grammar.get(current.rule.name))
 //            {
 //                Keyword first = p.rhs.size() > 0 ? p.rhs.get(0) : null;
@@ -387,41 +389,67 @@ public class Parser
 //                    queue.add(new FirstSetParseTree(first, parent));
 //                }
 //            }
-        }
-        return result;
-    }
+		}
+		return result;
+	}
 
-    private Set<Keyword> getFollow(Item i)
-    {
-        //TODO
-        Keyword follow = i.rhs.size() > i.position + 1 ? null : i.rhs.get(i.position+1);
-        return firstSet.get(follow);
-    }
+	private void generateFollowSet()
+	{
+		//TODO
+		boolean changed = true;
+		keywordDict.forEach((s, k) ->
+		{
+			if (!k.isTerminal())
+				followSet.put(k, new HashSet<>());
+		});
+		followSet.get(keywordDict.get("PROGRAM")).add(Keyword.EOF);
+		while (changed)
+		{
+			for(Keyword k : keywordDict.values())
+			{
+				if(k.isTerminal()) continue;
+				for(ProductionRule rule : grammar.get(k))
+				{
+					for (int i = 0; i < rule.rhs.size(); i++)
+					{
+						Keyword current = rule.rhs.get(i);
+						Keyword next = i + 1 < rule.rhs.size() ? rule.rhs.get(i+1) : null;
+						if(current.isTerminal()) continue;
+//						followSet.get(current).
+					}
+				}
+			}
+		}
+
+	}
 
 	/**
 	 * item list를 만든다. grammar가 확정된 이후 items에 가능한 모든 item을 저장한다.
 	 * 사실 필요한건지 잘 모르겠다... 그냥 item set에서 순차적으로 만드는게 낫지 않을까?
-	 *
 	 */
 	private void generateTable()
 	{
 		List<Partition> queue = new ArrayList<>();
-		queue.add(generatePartition(Arrays.asList(new Item(grammar.get(keywordDict.get("PROGRAM")).get(0), Keyword.EOF))));
+		List<Item> initialItems = new ArrayList<>();
+		grammar.get(keywordDict.get("PROGRAM")).forEach(r -> initialItems.add(new Item(r, Keyword.EOF)));
+
+
+		queue.add(generatePartition(initialItems));
 		boolean init = false;
-		while(queue.size() > 0)
+		while (queue.size() > 0)
 		{
 			Partition currentSet = queue.remove(0);
-			if(!init)
+			if (!init)
 			{
 				root = currentSet;
 				init = true;
 			}
 
-			if(partitions.contains(currentSet)) continue;
+			if (partitions.contains(currentSet)) continue;
 			partitions.add(currentSet);
 			Set<Keyword> next = new HashSet<>();
 			//transition 후보들을 얻어옴
-			for(Item item : currentSet.getItems())
+			for (Item item : currentSet.getItems())
 			{
 				Keyword k = item.getNext();
 				if (k != null) next.add(k);
@@ -429,7 +457,7 @@ public class Parser
 
 			//각각의 후보에 대해 transition된 item을 만들고, 그 item을 새로운 partition으로 만듬
 
-			for(Keyword transitionWord : next)
+			for (Keyword transitionWord : next)
 			{
 				//일단 해당 keyword로 transition될 모든 item을 모은다
 				Set<Item> generateSet = new HashSet<>();
@@ -441,12 +469,12 @@ public class Parser
 					}
 				}
 
-				if(generateSet.size() > 0)
+				if (generateSet.size() > 0)
 				{
 
 					Partition newPartition = generatePartition(generateSet);
 					currentSet.getShift().put(transitionWord, newPartition);
-                    if(queue.contains(newPartition) || partitions.contains(newPartition)) continue;
+					if (queue.contains(newPartition) || partitions.contains(newPartition)) continue;
 					queue.add(newPartition);
 				}
 			}
@@ -457,20 +485,25 @@ public class Parser
 	{
 		Set<Item> result = new HashSet<>();
 		List<Item> queue = new ArrayList<>(item);
+		Set<Keyword> checkedKeyword = new HashSet<>();
 		Item current;
 		while (queue.size() > 0)
 		{
 			current = queue.remove(0);
-			if(current.rhs.size() == 0) continue;
+			if (current.rhs.size() == 0) continue;
 			result.add(current);
 			Keyword next = current.getNext();
-			if(next != null && !next.isTerminal())
+			if (next != null && !next.isTerminal())
 			{
+
+				if (checkedKeyword.contains(next)) continue;
 				for (ProductionRule rule : grammar.get(next))
 				{
 					Item i = rule.rhs.size() > 0 ? new Item(rule, current.lookahead) : current.nextItem();
 					queue.add(i);
+
 				}
+				checkedKeyword.add(next);
 			}
 //			for (ProductionRule rule : grammar.get(current.name))
 //			{
@@ -483,11 +516,11 @@ public class Parser
 //			}
 		}
 		Partition p = new Partition(result);
-		for(Partition pp : partitions)
-        {
-            if (pp.equals(p)) return pp;
-        }
-        return p;
+		for (Partition pp : partitions)
+		{
+			if (pp.equals(p)) return pp;
+		}
+		return p;
 	}
 
 
@@ -504,35 +537,36 @@ public class Parser
 	 * @return root node
 	 */
 	public void parse(File file, scanner.Scanner scanner) throws IOException
-    {
+	{
 		List<Keyword> keywordSequence = scanner.scan(file);
-        keywordSequence.add(Keyword.EOF);
-        ParseState initial = new ParseState(root);
-        keywordSequence.forEach(initial::feed);
+		keywordSequence.add(Keyword.EOF);
+		ParseState initial = new ParseState(root);
+		keywordSequence.forEach(initial::feed);
 	}
 
-    //first set을 만들기 위한 일회용 class
+	//first set을 만들기 위한 일회용 class
 	//지금은 first set을 안 만들기 때문에 필요없음
 	private class FirstSetParseTree
-    {
-        ProductionRule rule;
-        FirstSetParseTree parent;
-        List<FirstSetParseTree> children;
-        int startIndex;
-        private FirstSetParseTree(ProductionRule rule, FirstSetParseTree parent, int startIndex)
-        {
-            this.rule = rule;
-            this.parent = parent;
-            this.children = new ArrayList<>();
-            this.startIndex = startIndex;
-            if(parent != null) parent.children.add(this);
-        }
+	{
+		ProductionRule rule;
+		FirstSetParseTree parent;
+		List<FirstSetParseTree> children;
+		int startIndex;
 
-        private Keyword getNext()
-        {
-            return rule.rhs.size() > startIndex ? rule.rhs.get(startIndex) : null;
-        }
-    }
+		private FirstSetParseTree(ProductionRule rule, FirstSetParseTree parent, int startIndex)
+		{
+			this.rule = rule;
+			this.parent = parent;
+			this.children = new ArrayList<>();
+			this.startIndex = startIndex;
+			if (parent != null) parent.children.add(this);
+		}
+
+		private Keyword getNext()
+		{
+			return rule.rhs.size() > startIndex ? rule.rhs.get(startIndex) : null;
+		}
+	}
 
 
 }
