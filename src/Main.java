@@ -2,7 +2,6 @@ import error.ParseException;
 import error.ScannerException;
 import parser.Parser;
 import scanner.Scanner;
-import structure.Keyword;
 
 import java.io.File;
 import java.io.IOException;
@@ -25,7 +24,7 @@ public class Main
 //            System.out.println(word.toString());
 //        }
         Parser p = Parser.GenerateParser(new File(language_definition_dir+minilang_prefix+"grammar"));
-        p.getPartitions().forEach(System.out::println);
+        p.getClosures().forEach(System.out::println);
 //        p.grammar.forEach((k, v) ->
 //		{
 //			for(ProductionRule pe : v)

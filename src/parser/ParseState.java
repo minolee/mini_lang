@@ -6,12 +6,12 @@ import java.util.Stack;
 
 class ParseState
 {
-	private Stack<Partition> partitionStack;
-	private Partition current;
-	ParseState(Partition initial)
+	private Stack<Closure> closureStack;
+	private Closure current;
+	ParseState(Closure initial)
 	{
-		partitionStack = new Stack<>();
-		partitionStack.push(initial);
+		closureStack = new Stack<>();
+		closureStack.push(initial);
 		current = initial;
 	}
 	void feed(Keyword k)
@@ -29,7 +29,7 @@ class ParseState
 		if(current == null)
 		{
 			//reduce 어떻게?
-			current = partitionStack.pop();
+			current = closureStack.pop();
 			for(Item i : current.getItems())
 			{
 				if(i.getNext() == null)
@@ -39,7 +39,7 @@ class ParseState
 			}
 			return;
 		}
-		partitionStack.push(current);
+		closureStack.push(current);
 
 	}
 

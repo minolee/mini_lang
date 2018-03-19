@@ -24,8 +24,8 @@ public class Parser
 	private final Map<Keyword, Set<Keyword>> followSet;
 	private final Map<String, Keyword> keywordDict;
 	@Getter
-	private final Set<Partition> partitions;
-	private Partition root;
+	private final Set<Closure> closures;
+	private Closure root;
 	private Map<Keyword, Integer> tempCount = new HashMap<>();
 
 	private Parser()
@@ -34,7 +34,7 @@ public class Parser
 		grammar = new HashMap<>();
 		firstSet = new HashMap<>();
 		followSet = new HashMap<>();
-		partitions = new HashSet<>();
+		closures = new HashSet<>();
 	}
 
 	/**
@@ -402,7 +402,6 @@ public class Parser
 
 	private void generateFollowSet()
 	{
-		//TODO
 		keywordDict.forEach((s, k) ->
 		{
 			if (!k.isTerminal())
@@ -454,24 +453,24 @@ public class Parser
 	 */
 	private void generateTable()
 	{
-		List<Partition> queue = new ArrayList<>();
-		List<Item> initialItems = new ArrayList<>();
+		List<Closure> queue = new ArrayList<>();
+		Set<Item> initialItems = new HashSet<>();
 		grammar.get(keywordDict.get("PROGRAM")).forEach(r -> initialItems.add(new Item(r, Keyword.EOF)));
 
 
-		queue.add(generatePartition(initialItems));
+		queue.add(generateClosure(initialItems));
 		boolean init = false;
 		while (queue.size() > 0)
 		{
-			Partition currentSet = queue.remove(0);
+			Closure currentSet = queue.remove(0);
 			if (!init)
 			{
 				root = currentSet;
 				init = true;
 			}
 
-			if (partitions.contains(currentSet)) continue;
-			partitions.add(currentSet);
+			if (closures.contains(currentSet)) continue;
+			closures.add(currentSet);
 			Set<Keyword> next = new HashSet<>();
 			//transition 후보들을 얻어옴
 			for (Item item : currentSet.getItems())
@@ -497,51 +496,44 @@ public class Parser
 				if (generateSet.size() > 0)
 				{
 
-					Partition newPartition = generatePartition(generateSet);
-					currentSet.getShift().put(transitionWord, newPartition);
-					if (queue.contains(newPartition) || partitions.contains(newPartition)) continue;
-					queue.add(newPartition);
+					Closure newClosure = generateClosure(generateSet);
+					currentSet.getShift().put(transitionWord, newClosure);
+					if (queue.contains(newClosure) || closures.contains(newClosure)) continue;
+					queue.add(newClosure);
 				}
 			}
 		}
 	}
 
-	private Partition generatePartition(Collection<Item> item)
+	private Closure generateClosure(Collection<Item> item)
 	{
-		Set<Item> result = new HashSet<>();
-		List<Item> queue = new ArrayList<>(item);
-		Set<Keyword> checkedKeyword = new HashSet<>();
-		Item current;
-		while (queue.size() > 0)
+		Set<Item> result = new HashSet<>(item);
+		Set<Item> temp = new HashSet<>();
+		boolean changed;
+		do
 		{
-			current = queue.remove(0);
-			if (current.rhs.size() == 0) continue;
-			result.add(current);
-			Keyword next = current.getNext();
-			if (next != null && !next.isTerminal())
+			changed = false;
+			temp.clear();
+			for(Item i : result)
 			{
-
-				if (checkedKeyword.contains(next)) continue;
-				for (ProductionRule rule : grammar.get(next))
+				Keyword next = i.getNext();
+				if(next.isTerminal()) continue;
+				for(ProductionRule rule : grammar.get(next))
 				{
-					Item i = rule.rhs.size() > 0 ? new Item(rule, current.lookahead) : current.nextItem();
-					queue.add(i);
-
+					for(Keyword lookahead : firstSet.get(i.getAfter()))
+					{
+						temp.add(new Item(rule, lookahead));
+					}
 				}
-				checkedKeyword.add(next);
 			}
-//			for (ProductionRule rule : grammar.get(current.generatingKeyword))
-//			{
-//				//get right after keyword, and if it is non-terminal, add new item to partition
-//				if(rule.rhs.size() > 0 && !rule.rhs.get(current.position).isTerminal())
-//				{
-//					Item i = new Item(rule, 0);
-//					queue.add(i);
-//				}
-//			}
+			for(Item i : temp)
+			{
+				changed |= result.add(i);
+			}
 		}
-		Partition p = new Partition(result);
-		for (Partition pp : partitions)
+		while (changed);
+		Closure p = new Closure(result);
+		for (Closure pp : closures)
 		{
 			if (pp.equals(p)) return pp;
 		}

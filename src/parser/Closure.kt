@@ -2,9 +2,9 @@ package parser
 
 import structure.Keyword
 
-class Partition internal constructor(items : Collection<Item>) {
+class Closure internal constructor(items : Collection<Item>) {
     val items = HashSet<Item>()
-    val shift = HashMap<Keyword, Partition>()
+    val shift = HashMap<Keyword, Closure>()
     init
     {
         this.items.addAll(items)
@@ -19,7 +19,7 @@ class Partition internal constructor(items : Collection<Item>) {
     override fun equals(other: Any?): Boolean {
         if( other === this) return true
         if(other?.javaClass != this.javaClass) return false
-        other as Partition
+        other as Closure
         return items == other.items
     }
     override fun hashCode() = items.hashCode()
