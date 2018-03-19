@@ -13,18 +13,18 @@ class ProductionRule
 {
 	private final boolean visible;
 	final List<Keyword> rhs;
-	final Keyword name;
+	final Keyword generatingKeyword;
 
-	ProductionRule(Keyword name, boolean visible, List<Keyword> rhs)
+	ProductionRule(Keyword generatingKeyword, boolean visible, List<Keyword> rhs)
 	{
-		this.name = name;
+		this.generatingKeyword = generatingKeyword;
 		this.visible = visible;
 		this.rhs = rhs;
 	}
 
 	ProductionRule(ProductionRule elem)
 	{
-		this.name = elem.name;
+		this.generatingKeyword = elem.generatingKeyword;
 		this.visible = elem.visible;
 		this.rhs = new ArrayList<>();
 		rhs.addAll(elem.rhs);
@@ -34,7 +34,7 @@ class ProductionRule
 	public String toString()
 	{
 		StringBuilder builder = new StringBuilder();
-		builder.append(name);
+		builder.append(generatingKeyword);
 		builder.append(" -> ");
 		rhs.forEach(builder::append);
 		return builder.toString();
@@ -57,7 +57,7 @@ class ProductionRule
 	@Override
 	public int hashCode()
 	{
-		int result = name.hashCode();
+		int result = generatingKeyword.hashCode();
 		for(Keyword k : rhs)
 		{
 			result ^= k.hashCode();

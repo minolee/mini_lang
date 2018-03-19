@@ -68,13 +68,16 @@ public class Parser
 			}
 
 			p.grammar.put(p.keywordDict.get(lhs), elements);
-			p.mergeDuplicateGrammar();
+
 		}
 		//cleanup
 		p.tempCount = null;
 		reader.close();
 
 		//after parsing grammar
+		p.mergeDuplicateGrammar();
+		p.generateFirstSet();
+		p.generateFollowSet();
 		p.generateTable();
 
 		return p;
@@ -288,10 +291,10 @@ public class Parser
 				}
 				break;
 			case ONCE:
-				/* A -> B? 를 다음과 같이 변경
-				 * A -> B | e
+				/* A -> AB?C 를 다음과 같이 변경
+				 * A -> ABC | AC
 				 */
-				if (keywords.left.op != RegexOperation.NONE)
+				if (keywords.left.op != RegexOperation.NONE && keywords.left.op != RegexOperation.DUMMY)
 					throw new ParseException(ParseException.ExceptionType.ILLEGAL_GRAMMAR);
 
 				left = translateToSimpleForm(keywords.left); // B
@@ -300,8 +303,8 @@ public class Parser
 				{
 					elems.add(new ProductionRule(keywords.left.data, true, l));
 				}
-				grammar.put(keywords.left.data, elems);
 				elements.add(new ArrayList<>());
+				temp.add(keywords.left.data);
 				elements.add(temp);
 				break;
 			case DUMMY: //()
@@ -344,6 +347,10 @@ public class Parser
 
 	private void generateFirstSet()
 	{
+		keywordDict.forEach((s, k) ->
+		{
+			if (k.isTerminal()) firstSet.put(k, Collections.singleton(k));
+		});
 		grammar.keySet().forEach(k -> firstSet.put(k, getFirst(k)));
 	}
 
@@ -376,7 +383,7 @@ public class Parser
 					queue.add(new FirstSetParseTree(p, current, 0));
 				}
 			}
-//            for(ProductionRule p : grammar.get(current.rule.name))
+//            for(ProductionRule p : grammar.get(current.rule.generatingKeyword))
 //            {
 //                Keyword first = p.rhs.size() > 0 ? p.rhs.get(0) : null;
 //                if(first == null)
@@ -396,30 +403,48 @@ public class Parser
 	private void generateFollowSet()
 	{
 		//TODO
-		boolean changed = true;
 		keywordDict.forEach((s, k) ->
 		{
 			if (!k.isTerminal())
 				followSet.put(k, new HashSet<>());
 		});
 		followSet.get(keywordDict.get("PROGRAM")).add(Keyword.EOF);
-		while (changed)
+		boolean changed;
+		do
 		{
-			for(Keyword k : keywordDict.values())
+			changed = false;
+			for (Keyword k : keywordDict.values())
 			{
-				if(k.isTerminal()) continue;
-				for(ProductionRule rule : grammar.get(k))
+				if (k.isTerminal()) continue;
+				for (ProductionRule rule : grammar.get(k))
 				{
+					System.out.println(rule);
 					for (int i = 0; i < rule.rhs.size(); i++)
 					{
 						Keyword current = rule.rhs.get(i);
-						Keyword next = i + 1 < rule.rhs.size() ? rule.rhs.get(i+1) : null;
-						if(current.isTerminal()) continue;
-//						followSet.get(current).
+						Keyword next = i + 1 < rule.rhs.size() ? rule.rhs.get(i + 1) : null;
+						if (current.isTerminal()) continue;
+						if (next != null)
+						{
+							for (Keyword first : firstSet.get(next))
+							{
+								changed |= followSet.get(current).add(first);
+								System.out.println(String.format("%s added to follow set of %s", first, current));
+							}
+						}
+						else
+						{
+							for (Keyword follow : followSet.get(rule.generatingKeyword))
+							{
+								changed |= followSet.get(current).add(follow);
+								System.out.println(String.format("%s added to follow set of %s", follow, current));
+							}
+						}
 					}
 				}
 			}
 		}
+		while (changed);
 
 	}
 
@@ -505,7 +530,7 @@ public class Parser
 				}
 				checkedKeyword.add(next);
 			}
-//			for (ProductionRule rule : grammar.get(current.name))
+//			for (ProductionRule rule : grammar.get(current.generatingKeyword))
 //			{
 //				//get right after keyword, and if it is non-terminal, add new item to partition
 //				if(rule.rhs.size() > 0 && !rule.rhs.get(current.position).isTerminal())

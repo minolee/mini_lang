@@ -2,9 +2,6 @@ package parser;
 
 import structure.Keyword;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * Created by pathm on 2017-09-04.
  * LR(1) item
@@ -41,7 +38,7 @@ public class Item extends ProductionRule
     @Override
     public String toString()
     {
-    	StringBuilder builder = new StringBuilder(name.toString() + " -> ");
+    	StringBuilder builder = new StringBuilder(generatingKeyword.toString() + " -> ");
 	    for (int i = 0; i < rhs.size(); i++)
 	    {
 	    	if(i == position) builder.append("*");
@@ -57,7 +54,7 @@ public class Item extends ProductionRule
         if( o == null) return false;
         if(!(o instanceof  Item)) return false;
         Item other = ((Item) o);
-        return other.name.equals(name) && other.position == position && other.rhs.equals(rhs);
+        return other.generatingKeyword.equals(generatingKeyword) && other.position == position && other.rhs.equals(rhs);
     }
     @Override
 	public int hashCode()
