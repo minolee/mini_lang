@@ -7,6 +7,7 @@ import automaton.RegexTree;
 import error.ParseException;
 import error.ScannerException;
 import lombok.Getter;
+import org.jetbrains.annotations.NotNull;
 import structure.Keyword;
 
 import java.io.*;
@@ -78,7 +79,8 @@ public class Parser
 		p.mergeDuplicateGrammar();
 		p.generateFirstSet();
 		p.generateFollowSet();
-		p.generateTable();
+		p.generateDFA();
+		p.generateParseTable();
 
 		return p;
 	}
@@ -383,19 +385,6 @@ public class Parser
 					queue.add(new FirstSetParseTree(p, current, 0));
 				}
 			}
-//            for(ProductionRule p : grammar.get(current.rule.generatingKeyword))
-//            {
-//                Keyword first = p.rhs.size() > 0 ? p.rhs.get(0) : null;
-//                if(first == null)
-//                {
-//                    continue;
-//                }
-//                if(first.isTerminal()) result.add(first);
-//                else
-//                {
-//                    queue.add(new FirstSetParseTree(first, parent));
-//                }
-//            }
 		}
 		return result;
 	}
@@ -417,7 +406,6 @@ public class Parser
 				if (k.isTerminal()) continue;
 				for (ProductionRule rule : grammar.get(k))
 				{
-					System.out.println(rule);
 					for (int i = 0; i < rule.rhs.size(); i++)
 					{
 						Keyword current = rule.rhs.get(i);
@@ -428,7 +416,6 @@ public class Parser
 							for (Keyword first : firstSet.get(next))
 							{
 								changed |= followSet.get(current).add(first);
-								System.out.println(String.format("%s added to follow set of %s", first, current));
 							}
 						}
 						else
@@ -436,7 +423,6 @@ public class Parser
 							for (Keyword follow : followSet.get(rule.generatingKeyword))
 							{
 								changed |= followSet.get(current).add(follow);
-								System.out.println(String.format("%s added to follow set of %s", follow, current));
 							}
 						}
 					}
@@ -451,6 +437,7 @@ public class Parser
 	 * item list를 만든다. grammar가 확정된 이후 items에 가능한 모든 item을 저장한다.
 	 * 사실 필요한건지 잘 모르겠다... 그냥 item set에서 순차적으로 만드는게 낫지 않을까?
 	 */
+	@Deprecated
 	private void generateTable()
 	{
 		List<Closure> queue = new ArrayList<>();
@@ -489,7 +476,15 @@ public class Parser
 				{
 					if (item.getNext() != null && item.getNext().equals(transitionWord))
 					{
-						generateSet.add(item.nextItem());
+						try
+						{
+							generateSet.add(item.nextItem());
+						}
+						catch (Exception e)
+						{
+							e.printStackTrace();
+							System.exit(1);
+						}
 					}
 				}
 
@@ -514,30 +509,83 @@ public class Parser
 		{
 			changed = false;
 			temp.clear();
-			for(Item i : result)
+			for (Item i : result)
 			{
 				Keyword next = i.getNext();
-				if(next.isTerminal()) continue;
-				for(ProductionRule rule : grammar.get(next))
+				if (next == null || next.isTerminal()) continue;
+				for (ProductionRule rule : grammar.get(next))
 				{
-					for(Keyword lookahead : firstSet.get(i.getAfter()))
+					for (Keyword lookahead : firstSet.get(i.getAfter()))
 					{
 						temp.add(new Item(rule, lookahead));
 					}
 				}
 			}
-			for(Item i : temp)
+			for (Item i : temp)
 			{
 				changed |= result.add(i);
 			}
 		}
 		while (changed);
-		Closure p = new Closure(result);
-		for (Closure pp : closures)
+		Closure c = new Closure(result);
+		for (Closure cc : closures)
 		{
-			if (pp.equals(p)) return pp;
+			if (cc.equals(c))
+				return cc;
 		}
-		return p;
+		return c;
+	}
+
+	private Closure gotoClosure(Closure c, @NotNull Keyword k)
+	{
+		if (c.getShift().containsKey(k)) return c.getShift().get(k);
+		Set<Item> temp = new HashSet<>();
+		for (Item i : c.getItems())
+		{
+			if (i.getNext() == k)
+			{
+				try
+				{
+					temp.add(i.nextItem());
+				}
+				catch (Exception e)
+				{
+					e.printStackTrace();
+					System.exit(1);
+				}
+			}
+		}
+		Closure newClosure = generateClosure(temp);
+		c.getShift().put(k, newClosure);
+		return newClosure;
+	}
+
+	private void generateDFA()
+	{
+		Set<Item> initialItems = new HashSet<>();
+		grammar.get(keywordDict.get("PROGRAM")).forEach(r -> initialItems.add(new Item(r, Keyword.EOF)));
+		root = generateClosure(initialItems);
+		closures.add(root);
+		boolean changed;
+		do
+		{
+			Set<Closure> copy = new HashSet<>(closures);
+			changed = false;
+			for (Closure c : copy)
+			{
+				for (Item i : c.getItems())
+				{
+					if(i.getNext() != null)
+						changed |= closures.add(gotoClosure(c, i.getNext()));
+				}
+			}
+		}
+		while (changed);
+	}
+
+	private void generateParseTable()
+	{
+
 	}
 
 
@@ -558,7 +606,9 @@ public class Parser
 		List<Keyword> keywordSequence = scanner.scan(file);
 		keywordSequence.add(Keyword.EOF);
 		ParseState initial = new ParseState(root);
-		keywordSequence.forEach(initial::feed);
+		Stack<ParseState> context = new Stack<>();
+		context.push(initial);
+		keywordSequence.forEach(k ->ParseState.feed(context, k));
 	}
 
 	//first set을 만들기 위한 일회용 class

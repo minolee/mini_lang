@@ -10,26 +10,41 @@ public class Item extends ProductionRule
 {
 	final int position;
 	final Keyword lookahead;
+	private Item previousItem;
+	private Item nextItem;
 
 	Item(ProductionRule elem, Keyword lookahead) //special rule(EOF)를 위해 package-private로 남겨둠
 	{
 		super(elem);
 		position = 0;
+		previousItem = null;
 		this.lookahead = lookahead;
 	}
 
-	private Item(Item elem)
+	private Item(Item elem) throws Exception
 	{
 		super(elem);
-
+		this.previousItem = elem;
 		position = elem.position + 1;
+		if(position > this.rhs.size()) throw new Exception("Oversized item");
 		lookahead = elem.lookahead;
 	}
 
-	public Item nextItem()
+	public Item previousItem()
 	{
-		return new Item(this);
+		return this.previousItem;
 	}
+
+	public Item nextItem() throws Exception
+	{
+		if(this.nextItem == null)
+		{
+			this.nextItem = new Item(this);
+		}
+		return this.nextItem;
+	}
+
+
 
 	public Keyword getNext()
 	{

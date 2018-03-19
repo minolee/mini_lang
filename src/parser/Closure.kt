@@ -4,7 +4,8 @@ import structure.Keyword
 
 class Closure internal constructor(items : Collection<Item>) {
     val items = HashSet<Item>()
-    val shift = HashMap<Keyword, Closure>()
+    val shift = HashMap<Keyword, Closure>() // shift, goto
+    //reduce는 어떻게?
     init
     {
         this.items.addAll(items)
