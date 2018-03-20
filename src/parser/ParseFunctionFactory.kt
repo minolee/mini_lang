@@ -4,17 +4,25 @@ import structure.Keyword
 
 class ParseFunctionFactory
 {
+    private val DefaultArrayList = { ArrayList<Keyword>() } //개귀찮
 
     fun Default(context: List<Keyword>): List<Keyword>
     {
-        val temp = ArrayList<Keyword>()
+        val temp = DefaultArrayList()
         context.forEach { temp.add(it) }
+        return temp
+    }
+
+    fun Sentence(context: List<Keyword>): List<Keyword>
+    {
+        val temp = DefaultArrayList()
+        
         return temp
     }
 
     fun Case_List(context: List<Keyword>): List<Keyword>
     {
-        val temp = ArrayList<Keyword>()
+        val temp = DefaultArrayList()
         for (node in context)
         {
             if (node.keyword == "CASE") temp.add(node)
@@ -25,7 +33,6 @@ class ParseFunctionFactory
         }
         return temp
     }
-
 
 
     private fun findAll(from: Keyword, keyword: String): List<Keyword>
@@ -39,7 +46,7 @@ class ParseFunctionFactory
         return result
     }
 
-    private fun Keyword.hasParent(target: String): Boolean
+    private fun Keyword.hasParent(target: String, until: Keyword? = null): Boolean
     {
         if (parent == null) return false
         if (keyword == target) return true
