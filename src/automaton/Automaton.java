@@ -14,7 +14,7 @@ import java.util.function.Function;
  */
 public class Automaton<T>
 {
-	List<State<T>> currentState;
+	private List<State<T>> currentState;
 	private List<State<T>> states;
 	private State<T> startState;
 	@Getter
@@ -360,7 +360,7 @@ public class Automaton<T>
 		return closure;
 	}
 
-	public static <T> Automaton<T> reduce(Automaton<T> input)
+	private static <T> Automaton<T> reduce(Automaton<T> input)
 	{
 		return removeEpsilonMovement(input);
 	}

@@ -221,7 +221,7 @@ public class ScannerTest
                 Automaton<Character> a = Automaton.parseLine(s, Scanner::transferFunction);
                 throw new Exception();
             }
-            catch(ScannerException e)
+            catch(ScannerException ignored)
             {
 
             }

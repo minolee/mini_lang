@@ -10,7 +10,7 @@ public class RegexTree<T>
     public T data;
     public RegexTree<T> left;
     public RegexTree<T> right;
-    String range;
+    private String range;
     RegexTree(RegexOperation op)
     {
         this.op = op;

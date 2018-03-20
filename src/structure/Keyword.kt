@@ -1,23 +1,32 @@
 package structure
 
-class Keyword : ProgramNode
+class Keyword
 {
     constructor(keyword: String, isTerminal: Boolean)
     {
         this.keyword = keyword
         this.isTerminal = isTerminal
     }
+
     val keyword: String
     val isTerminal: Boolean
     var strValue: String? = null
     var intValue: Int? = null
     var floatValue: Float? = null
     var keywordType: String = "None"
+    var parent: Keyword? = null
+    val children = ArrayList<Keyword>()
+    var treewalkFun: ()->Any = {}
+    var reduceFun = util.FunctionFinder.FindParseFunctionByName("Default")
+
     companion object
     {
-        @JvmField val EOF = Keyword("eof", true)
-        @JvmField val EPSILON = Keyword("epsilon", true)
+        @JvmField
+        val EOF = Keyword("eof", true)
+        @JvmField
+        val EPSILON = Keyword("epsilon", true)
     }
+
     constructor(keyword: String, isTerminal: Boolean, value: String) : this(keyword, isTerminal)
     {
         strValue = value
@@ -29,6 +38,7 @@ class Keyword : ProgramNode
         intValue = value
         keywordType = "Int"
     }
+
     constructor(keyword: String, isTerminal: Boolean, value: Float) : this(keyword, isTerminal)
     {
         floatValue = value
@@ -42,18 +52,18 @@ class Keyword : ProgramNode
         return "$open$keyword$close"
     }
 
-    override fun equals(other: Any?):Boolean
+    override fun equals(other: Any?): Boolean
     {
-        if ( this === other) return true
+        if (this === other) return true
         if (other?.javaClass != javaClass) return false
         other as Keyword
         return other.keyword == keyword
     }
 
-    override fun hashCode(): Int {
+    override fun hashCode(): Int
+    {
         return keyword.hashCode()
     }
-
 
 
 }

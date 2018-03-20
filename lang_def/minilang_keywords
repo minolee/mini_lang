@@ -29,7 +29,7 @@ MULTIPLY : \*
 DIVIDE : /
 REMAINDER : %
 
-END_SENTENCE : \r\n|\n
+#END_SENTENCE : \r\n|\n
 
 LPARENTHESE : \(
 RPARENTHESE : \)

@@ -8,7 +8,7 @@ import structure.Keyword;
  */
 public class Item extends ProductionRule
 {
-	final int position;
+	private final int position;
 	final Keyword lookahead;
 	private Item previousItem;
 	private Item nextItem;
@@ -26,7 +26,7 @@ public class Item extends ProductionRule
 		super(elem);
 		this.previousItem = elem;
 		position = elem.position + 1;
-		if(position > this.rhs.size()) throw new Exception("Oversized item");
+		if(position > this.rhs.size()) throw new Exception("Over-sized item");
 		lookahead = elem.lookahead;
 	}
 

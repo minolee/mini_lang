@@ -35,8 +35,7 @@ class State<T> {
 
     List<State<T>> transit(T input)
     {
-        List<State<T>> result = new ArrayList<>();
-        result.addAll(epsilonMovement);
+        List<State<T>> result = new ArrayList<>(epsilonMovement);
         if(transition.get(input) != null) transition.get(input).forEach(state -> {
             if(!result.contains(state)) result.add(state);
         });

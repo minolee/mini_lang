@@ -10,7 +10,7 @@ import java.util.Arrays;
 /**
  * Created by pathm on 2017-08-28.
  */
-public class Main
+class Main
 {
     private static final String language_definition_dir = "lang_def/";
     private static final String test_file_dir = "testfiles/";
