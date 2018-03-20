@@ -601,7 +601,7 @@ public class Parser
 	 * @param file source code
 	 * @return root node
 	 */
-	public void parse(File file, scanner.Scanner scanner) throws IOException
+	public void parse(File file, scanner.Scanner scanner) throws IOException, ScannerException
 	{
 		List<Keyword> keywordSequence = scanner.scan(file);
 		keywordSequence.add(Keyword.EOF);

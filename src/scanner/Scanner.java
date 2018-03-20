@@ -21,8 +21,8 @@ public class Scanner
         keywords = new ArrayList<>();
     }
 
-    public List<Keyword> scan(File file) throws IOException
-    {
+    public List<Keyword> scan(File file) throws IOException, ScannerException
+	{
         Reader reader = new BufferedReader(new FileReader(file));
         int line;
         StringBuilder buf = new StringBuilder();
@@ -43,6 +43,7 @@ public class Scanner
             if(count == 0)
             {
                 candidates.removeIf(a -> !a.acceptsCurrent());
+                if(candidates.size() == 0) throw new ScannerException(ScannerException.ExceptionType.SYNTAX_ERROR);
                 Automaton<Character> data = candidates.get(0);
                 switch (data.getName())
                 {

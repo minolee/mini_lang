@@ -47,11 +47,11 @@ class Keyword : ProgramNode
         if ( this === other) return true
         if (other?.javaClass != javaClass) return false
         other as Keyword
-        return other.keyword == keyword && other.keywordType == keywordType
+        return other.keyword == keyword
     }
 
     override fun hashCode(): Int {
-        return keyword.hashCode() xor keywordType.hashCode()
+        return keyword.hashCode()
     }
 
 

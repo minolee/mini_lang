@@ -22,7 +22,7 @@ public class ScannerException extends Throwable{
 
     public enum ExceptionType
     {
-        BLANK_IN_NAME("Keyword name should not include blank character!"), INVALID_RANGE("Range error : "), NO_MATCHING_PAIR("No matching pair of "), NO_PRECEDENCE("No precedence of "), UNKNOWN("Unknown keyword!");
+        BLANK_IN_NAME("Keyword name should not include blank character!"), INVALID_RANGE("Range error : "), NO_MATCHING_PAIR("No matching pair of "), NO_PRECEDENCE("No precedence of "), UNKNOWN("Unknown keyword!"), SYNTAX_ERROR("Syntax error");
         @Getter
         final String msg;
         ExceptionType(String s)
