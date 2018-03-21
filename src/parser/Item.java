@@ -59,7 +59,7 @@ public class Item extends ProductionRule
 	@Override
 	public String toString()
 	{
-		StringBuilder builder = new StringBuilder(generatingKeyword.toString() + " -> ");
+		StringBuilder builder = new StringBuilder(getGeneratingKeyword().toString() + " -> ");
 		for (int i = 0; i < rhs.size(); i++)
 		{
 			if (i == position) builder.append("*");
@@ -77,7 +77,7 @@ public class Item extends ProductionRule
 		if (o == null) return false;
 		if (!( o instanceof Item )) return false;
 		Item other = ( (Item) o );
-		return other.generatingKeyword.equals(generatingKeyword) && other.position == position && other.rhs.equals(rhs);
+		return other.getGeneratingKeyword().equals(getGeneratingKeyword()) && other.position == position && other.rhs.equals(rhs);
 	}
 
 	@Override

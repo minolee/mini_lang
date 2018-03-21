@@ -1,6 +1,6 @@
 package automaton;
 
-import error.ScannerException;
+import exception.ScannerException;
 import lombok.Getter;
 import lombok.Setter;
 

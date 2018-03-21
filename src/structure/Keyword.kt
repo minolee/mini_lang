@@ -13,8 +13,9 @@ class Keyword
         this.isVisible = isVisible
         this.reduceFun = FunctionFinder.FindParseFunctionByName(keyword.toLowerCase())
     }
-    constructor(keyword: String, isTerminal: Boolean): this(keyword, isTerminal, true)
 
+    constructor(keyword: String, isTerminal: Boolean) : this(keyword, isTerminal, true)
+    constructor(copy: Keyword) : this(copy.keyword, copy.isTerminal, copy.isVisible)
 
 
     val keyword: String
@@ -26,7 +27,7 @@ class Keyword
     var keywordType: String = "None"
     var parent: Keyword? = null
     val children = ArrayList<Keyword>()
-    var treewalkFun: ()->Any = {}
+    var treewalkFun: () -> Any = {}
     val reduceFun: Method
 
     companion object

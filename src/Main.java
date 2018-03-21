@@ -1,12 +1,10 @@
-import error.ParseException;
-import error.ScannerException;
+import exception.ParseException;
+import exception.ScannerException;
 import parser.Parser;
 import scanner.Scanner;
-import util.FunctionFinder;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
 
 /**
  * Created by pathm on 2017-08-28.

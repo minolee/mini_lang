@@ -1,34 +1,35 @@
 package parser
 
 import structure.Keyword
+import java.util.*
 
 class ParseFunctionFactory
 {
-    private val defaultKeywordArray = { ArrayList<Keyword>() } //개귀찮
     //순서가 매우 중요하므로 무조건 List 사용
     fun default(context: List<Keyword>): List<Keyword>
     {
-        val temp = defaultKeywordArray()
+        val temp = ArrayList<Keyword>()
         context.forEach { temp.add(it) }
         return temp
     }
-
-    fun sentence(context: List<Keyword>): List<Keyword>
+    fun program(context: List<Keyword>) = findAndAddAll(context, "LEGAL_SENTENCE")
+    fun sentences(context: List<Keyword>) = findAndAddAll(context, "LEGAL_SENTENCE")
+    fun legal_sentence(context: List<Keyword>): List<Keyword>
     {
-        val temp = defaultKeywordArray()
-        for (node in context)
+        val result: List<Keyword>
+        when(context[0].keyword)
         {
-            temp.addAll(findAll(node, "LEGAL_SENTENCE"))
+            "DO_EXPR", "IF_EXPR" -> result = Collections.singletonList(context[0])
+            else -> result =  Collections.singletonList(context[0].children[0]) //skip COMPOUND_EXPR
         }
-        return temp
+        return result
     }
-
-    fun if_expr(context: List<Keyword>): List<Keyword> = case_list(context)
-    fun do_expr(context: List<Keyword>): List<Keyword> = case_list(context)
+    fun if_expr(context: List<Keyword>) = case_list(context)
+    fun do_expr(context: List<Keyword>) = case_list(context)
 
     fun case_list(context: List<Keyword>): List<Keyword>
     {
-        val temp = defaultKeywordArray()
+        val temp = ArrayList<Keyword>()
         for (node in context)
         {
             temp.addAll(findAll(node, "CASE"))
@@ -42,10 +43,10 @@ class ParseFunctionFactory
 
     fun base_case(context: List<Keyword>): List<Keyword>
     {
-        val result = defaultKeywordArray()
-        for(node in context)
+        val result = ArrayList<Keyword>()
+        for (node in context)
         {
-            when(node.keyword)
+            when (node.keyword)
             {
                 "EXPR", "ID", "NUMBER" -> result.add(node)
             }
@@ -57,7 +58,7 @@ class ParseFunctionFactory
 
     fun concurrent_expr_(context: List<Keyword>): List<Keyword>
     {
-        val result = defaultKeywordArray()
+        val result = ArrayList<Keyword>()
         for (node in context)
         {
             when (node.keyword)
@@ -73,7 +74,7 @@ class ParseFunctionFactory
 
     fun assign_expr(context: List<Keyword>): List<Keyword>
     {
-        val result = defaultKeywordArray()
+        val result = ArrayList<Keyword>()
         for (node in context)
         {
             when (node.keyword)
@@ -87,16 +88,28 @@ class ParseFunctionFactory
 
     private fun findAndAddAll(context: List<Keyword>, toAdd: String, iterative: Boolean = false): List<Keyword>
     {
-        return context.fold(defaultKeywordArray(), { list, keyword -> list.addAll(findAll(keyword, toAdd, iterative)); list })
+        val result = ArrayList<Keyword>()
+        for(c in context)
+            result.addAll(findAll(c, toAdd, iterative))
+        return result
     }
 
     private fun findAll(from: Keyword, keyword: String, iterative: Boolean = false): List<Keyword>
     {
         val result = ArrayList<Keyword>()
+        if (from.keyword == keyword)
+        {
+            result.add(from)
+            if (!iterative) return result
+        }
+
         for (node in from.children)
         {
-            if (node.keyword == keyword) result.add(node)
-            if (!iterative) continue
+            if (node.keyword == keyword)
+            {
+                result.add(node)
+                if (!iterative) continue
+            }
             node.children.forEach { result.addAll(findAll(it, keyword)) }
         }
         return result

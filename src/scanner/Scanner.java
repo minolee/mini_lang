@@ -2,7 +2,7 @@ package scanner;
 
 import automaton.Automaton;
 import automaton.RegexElement;
-import error.ScannerException;
+import exception.ScannerException;
 import structure.Keyword;
 
 import java.io.*;

@@ -13,7 +13,7 @@ class ProductionRule
 {
 	private final boolean visible;
 	final List<Keyword> rhs;
-	final Keyword generatingKeyword;
+	private final Keyword generatingKeyword;
 
 	ProductionRule(Keyword generatingKeyword, boolean visible, List<Keyword> rhs)
 	{
@@ -63,5 +63,10 @@ class ProductionRule
 			result ^= k.hashCode();
 		}
 		return result;
+	}
+
+	public Keyword getGeneratingKeyword()
+	{
+		return new Keyword(generatingKeyword);
 	}
 }

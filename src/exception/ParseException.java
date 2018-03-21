@@ -1,4 +1,4 @@
-package error;
+package exception;
 
 /**
  * Created by pathm on 2017-08-28.
@@ -17,7 +17,7 @@ public class ParseException extends Exception
 
     public enum ExceptionType
     {
-        AMBIGUOUS_GRAMMAR("Grammar is ambiguous"), ILLEGAL_GRAMMAR("Illegal grammar file"), SYNTAX_ERROR("Syntax error");
+        AMBIGUOUS_GRAMMAR("Grammar is ambiguous"), ILLEGAL_GRAMMAR("Illegal grammar file"), SYNTAX_ERROR("Syntax exception");
         final String msg;
         ExceptionType(String msg)
         {

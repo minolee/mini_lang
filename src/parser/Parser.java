@@ -4,8 +4,8 @@ import automaton.Automaton;
 import automaton.RegexElement;
 import automaton.RegexOperation;
 import automaton.RegexTree;
-import error.ParseException;
-import error.ScannerException;
+import exception.ParseException;
+import exception.ScannerException;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 import structure.Keyword;
@@ -420,7 +420,7 @@ public class Parser
 						}
 						else
 						{
-							for (Keyword follow : followSet.get(rule.generatingKeyword))
+							for (Keyword follow : followSet.get(rule.getGeneratingKeyword()))
 							{
 								changed |= followSet.get(current).add(follow);
 							}

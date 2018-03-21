@@ -1,6 +1,6 @@
 package parser
 
-import error.ParseException
+import exception.ParseException
 import structure.Keyword
 import java.util.*
 
@@ -45,9 +45,13 @@ class ParseState(initial: Closure)
                 reduceContext.add(current.currentKeyword!!)
             }
             //이 시점에서 item의 맨 앞까지 pop했으므로 유도 keyword를 push하고 종료
+            reduceContext.reverse()
             val push = target.generatingKeyword
+            if(push.keyword == "SENTENCES")
+                print("")
             (push.reduceFun.invoke(ParseFunctionFactory(), reduceContext) as List<*>).forEach { push.addChild(it as Keyword) }
             current.currentKeyword = push
+
             println("reduce $push")
             context.push(current)
             if (next == Keyword.EOF && push.keyword == "PROGRAM")

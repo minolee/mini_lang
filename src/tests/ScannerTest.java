@@ -1,7 +1,7 @@
 package tests;
 import org.junit.Test;
 import automaton.Automaton;
-import error.ScannerException;
+import exception.ScannerException;
 import scanner.Scanner;
 
 
