@@ -14,6 +14,6 @@ fi
 do
   b1 -> sl1
 | b2 -> sl2
-| b3 ->sl3
+| b3 -> m == (3 + 4 * 2) / 5 > 6
 od
 print(b1)

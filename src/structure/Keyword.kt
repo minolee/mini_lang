@@ -1,15 +1,25 @@
 package structure
 
+import util.FunctionFinder
+import java.lang.reflect.Method
+
 class Keyword
 {
-    constructor(keyword: String, isTerminal: Boolean)
+
+    constructor(keyword: String, isTerminal: Boolean, isVisible: Boolean)
     {
         this.keyword = keyword
         this.isTerminal = isTerminal
+        this.isVisible = isVisible
+        this.reduceFun = FunctionFinder.FindParseFunctionByName(keyword.toLowerCase())
     }
+    constructor(keyword: String, isTerminal: Boolean): this(keyword, isTerminal, true)
+
+
 
     val keyword: String
     val isTerminal: Boolean
+    val isVisible: Boolean
     var strValue: String? = null
     var intValue: Int? = null
     var floatValue: Float? = null
@@ -17,7 +27,7 @@ class Keyword
     var parent: Keyword? = null
     val children = ArrayList<Keyword>()
     var treewalkFun: ()->Any = {}
-    var reduceFun = util.FunctionFinder.FindParseFunctionByName("Default")
+    val reduceFun: Method
 
     companion object
     {
@@ -65,5 +75,9 @@ class Keyword
         return keyword.hashCode()
     }
 
-
+    fun addChild(child: Keyword)
+    {
+        child.parent = this
+        children.add(child)
+    }
 }

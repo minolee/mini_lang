@@ -2,6 +2,7 @@ import error.ParseException;
 import error.ScannerException;
 import parser.Parser;
 import scanner.Scanner;
+import util.FunctionFinder;
 
 import java.io.File;
 import java.io.IOException;
@@ -32,6 +33,6 @@ class Main
 //			}
 //		});
         p.parse(new File(test_file_dir+minilang_prefix+"parserTest.ml"), s);
-
+//        System.out.println(FunctionFinder.FindParseFunctionByName("case"));
     }
 }

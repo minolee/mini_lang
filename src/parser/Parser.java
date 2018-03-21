@@ -262,7 +262,7 @@ public class Parser
 				String s = String.format("%s:%d", surface, reusecount);
 				tempCount.put(keywordDict.get(surface), reusecount + 1);
 
-				Keyword k = new Keyword(s, false);// C'
+				Keyword k = new Keyword(s, false, false);// C'
 				keywordDict.put(s, k);
 
 				left = translateToSimpleForm(keywords.left); // C
