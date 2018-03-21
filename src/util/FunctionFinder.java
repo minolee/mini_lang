@@ -39,7 +39,14 @@ public class FunctionFinder
 		}
 		catch (NoSuchMethodException e)
 		{
-			return null;
+            try
+            {
+                return InterpretFunctionFactory.class.getDeclaredMethod("default", Keyword.class);
+            }
+            catch (NoSuchMethodException e1)
+            {
+                return null;
+            }
 		}
 		return method;
 	}
