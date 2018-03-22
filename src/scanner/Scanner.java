@@ -71,7 +71,7 @@ public class Scanner
 		}
 		catch (FileNotFoundException e)
 		{
-			System.out.println(String.format("File %s does not exist", fileName));
+			System.err.println(String.format("File %s does not exist", fileName));
 		}
 		catch (IOException | ScannerException e)
 		{

@@ -16,7 +16,6 @@ class ParseState(initial: Closure)
             var current = context.peek()
             if (current.currentState.shift.containsKey(next))
             {
-                println("Shift $next")
                 current.currentKeyword = next
                 context.push(ParseState(current.currentState.shift[next]!!))
                 return null
@@ -47,16 +46,12 @@ class ParseState(initial: Closure)
             //이 시점에서 item의 맨 앞까지 pop했으므로 유도 keyword를 push하고 종료
             reduceContext.reverse()
             val push = target.generatingKeyword
-            if(push.keyword == "SENTENCES")
-                print("")
             (push.reduceFun.invoke(ParseFunctionFactory(), reduceContext) as List<*>).forEach { push.addChild(it as Keyword) }
             current.currentKeyword = push
 
-            println("reduce $push")
             context.push(current)
             if (next == Keyword.EOF && push.keyword == "PROGRAM")
             {
-                println("SUCCESS!")
                 return push
             }
             context.push(ParseState(current.currentState.shift[push]!!))
