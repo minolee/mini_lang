@@ -1,6 +1,6 @@
 package structure
 
-class Value {
+class ProgramValue {
     var floatVal: Float? = null
     var intVal: Int? = null
     val type: Type
@@ -17,5 +17,11 @@ class Value {
     enum class Type
     {
         Float, Int
+    }
+
+    override fun toString(): String = when(type)
+    {
+        Type.Float -> floatVal.toString()
+        Type.Int -> intVal.toString()
     }
 }

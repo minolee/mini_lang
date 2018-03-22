@@ -575,7 +575,7 @@ public class Parser
 			{
 				for (Item i : c.getItems())
 				{
-					if(i.getNext() != null)
+					if (i.getNext() != null)
 						changed |= closures.add(gotoClosure(c, i.getNext()));
 				}
 			}
@@ -601,14 +601,15 @@ public class Parser
 	 * @param file source code
 	 * @return root node
 	 */
-	public void parse(File file, scanner.Scanner scanner) throws IOException, ScannerException
+	public Keyword parse(File file, scanner.Scanner scanner) throws IOException, ScannerException, ParseException
 	{
 		List<Keyword> keywordSequence = scanner.scan(file);
 		keywordSequence.add(Keyword.EOF);
 		ParseState initial = new ParseState(root);
 		Stack<ParseState> context = new Stack<>();
 		context.push(initial);
-		keywordSequence.forEach(k ->ParseState.feed(context, k));
+		keywordSequence.forEach(k -> ParseState.feed(context, k));
+		return context.pop().getCurrentKeyword();
 	}
 
 	//first set을 만들기 위한 일회용 class

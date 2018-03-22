@@ -1,5 +1,6 @@
 package structure
 
+import interpreter.InterpretFunctionFactory
 import util.FunctionFinder
 import java.lang.reflect.Method
 
@@ -12,6 +13,7 @@ class Keyword
         this.isTerminal = isTerminal
         this.isVisible = isVisible
         this.reduceFun = FunctionFinder.FindParseFunctionByName(keyword.toLowerCase())
+        this.interpretFun = FunctionFinder.FindInterpretFunctionByName(keyword.toLowerCase())
     }
 
     constructor(keyword: String, isTerminal: Boolean) : this(keyword, isTerminal, true)
@@ -25,9 +27,10 @@ class Keyword
     var intValue: Int? = null
     var floatValue: Float? = null
     var keywordType: String = "None"
+    var assigned: Boolean = false
     var parent: Keyword? = null
     val children = ArrayList<Keyword>()
-    var treewalkFun: () -> Any = {}
+    val interpretFun: Method
     val reduceFun: Method
 
     companion object
@@ -36,6 +39,8 @@ class Keyword
         val EOF = Keyword("eof", true)
         @JvmField
         val EPSILON = Keyword("epsilon", true)
+
+
     }
 
     constructor(keyword: String, isTerminal: Boolean, value: String) : this(keyword, isTerminal)
@@ -80,5 +85,10 @@ class Keyword
     {
         child.parent = this
         children.add(child)
+    }
+
+    fun interpret(context: ProgramState): ProgramValue?
+    {
+        return interpretFun.invoke(InterpretFunctionFactory(), this, context) as ProgramValue?
     }
 }

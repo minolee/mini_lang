@@ -1,7 +1,9 @@
 import exception.ParseException;
 import exception.ScannerException;
+import interpreter.Interpreter;
 import parser.Parser;
 import scanner.Scanner;
+import structure.Keyword;
 
 import java.io.File;
 import java.io.IOException;
@@ -30,7 +32,9 @@ class Main
 //				System.out.println(pe);
 //			}
 //		});
-        p.parse(new File(test_file_dir+minilang_prefix+"parserTest.ml"), s);
+        Keyword root = p.parse(new File(test_file_dir+minilang_prefix+"parserTest.ml"), s);
 //        System.out.println(FunctionFinder.FindParseFunctionByName("case"));
+        Interpreter i = Interpreter.GenerateInterpreter(root);
+        i.interpret();
     }
 }

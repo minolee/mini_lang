@@ -4,6 +4,7 @@ package structure
 //scope마다 바뀌어야 함
 class ProgramState
 {
-    val scope = HashMap<String, Value>()
+    //scope의 variable list
+    val scope = HashMap<String, ProgramValue>()
 }
 

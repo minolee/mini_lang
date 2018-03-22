@@ -12,7 +12,7 @@ class ParseFunctionFactory
         context.forEach { temp.add(it) }
         return temp
     }
-    fun program(context: List<Keyword>) = findAndAddAll(context, "LEGAL_SENTENCE")
+    fun program(context: List<Keyword>) = findAndAddAll(context, "LEGAL_SENTENCE").map{it.children[0]}.toList()
     fun sentences(context: List<Keyword>) = findAndAddAll(context, "LEGAL_SENTENCE")
     fun legal_sentence(context: List<Keyword>): List<Keyword>
     {
