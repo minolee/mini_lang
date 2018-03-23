@@ -39,7 +39,7 @@ class Keyword
         val EOF = Keyword("eof", true)
         @JvmField
         val EPSILON = Keyword("epsilon", true)
-
+        val InterpreterFactoryObject = InterpretFunctionFactory()
 
     }
 
@@ -89,6 +89,6 @@ class Keyword
 
     fun interpret(context: ProgramState): ProgramValue<*>?
     {
-        return interpretFun.invoke(InterpretFunctionFactory(), this, context) as ProgramValue<*>?
+        return interpretFun.invoke(InterpreterFactoryObject, this, context) as ProgramValue<*>?
     }
 }
