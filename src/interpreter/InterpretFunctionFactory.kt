@@ -18,20 +18,20 @@ class InterpretFunctionFactory
 
     fun print_expr(k: Keyword, context: ProgramState)
     {
-        print(k.children[0].interpret(context)!!)
+        println(k.children[0].interpret(context)!!)
     }
 
-    fun expr(k: Keyword, context: ProgramState): ProgramValue<*> = pass(k, context)
-    fun expr6(k: Keyword, context: ProgramState): ProgramValue<*> = pass(k, context)
-    fun expr8(k: Keyword, context: ProgramState): ProgramValue<*> = pass(k, context)
-    fun expr9(k: Keyword, context: ProgramState): ProgramValue<*> = pass(k, context)
-    fun expr10(k: Keyword, context: ProgramState): ProgramValue<*>
+    fun expr(k: Keyword, context: ProgramState): ProgramValue = pass(k, context)
+    fun expr6(k: Keyword, context: ProgramState): ProgramValue = pass(k, context)
+    fun expr8(k: Keyword, context: ProgramState): ProgramValue = pass(k, context)
+    fun expr9(k: Keyword, context: ProgramState): ProgramValue = pass(k, context)
+    fun expr10(k: Keyword, context: ProgramState): ProgramValue
     {
         val value = k.children[k.children.size - 1].interpret(context)
         return if(k.children.size > 1) -value!! else value!!
     }
 
-    fun base_case(k: Keyword, context: ProgramState): ProgramValue<*> = when(k.children[0].keyword)
+    fun base_case(k: Keyword, context: ProgramState): ProgramValue = when(k.children[0].keyword)
     {
         "EXPR" -> expr(k, context)
         "ID" -> context.scope[k.children[0].strValue!!]!!
@@ -46,7 +46,7 @@ class InterpretFunctionFactory
     }
 
     //[EXPR][EXPRX_] 형태의 EXPR
-    fun pass(k: Keyword, context: ProgramState): ProgramValue<*>
+    fun pass(k: Keyword, context: ProgramState): ProgramValue
     {
         val left = k.children[0].interpret(context)!! // base case 때문에 pass를 못 부름
         if(k.children.size > 1) return expr_underbar(k.children[1], context, left)
@@ -54,24 +54,30 @@ class InterpretFunctionFactory
     }
 
     //EXPR_ 형태
-    fun expr_underbar(k: Keyword, context: ProgramState, left: ProgramValue<*>): ProgramValue<*>
+    fun expr_underbar(k: Keyword, context: ProgramState, left: ProgramValue): ProgramValue
     {
         val op = k.children[0].keyword
         val right = k.children[1].interpret(context)!!
-        when(op)
+        //3번째 element도 고려해야 해!
+        val x: ProgramValue = when(op)
         {
-            "EQ" -> return ProgramValue(if(left == right) 1 else 0)
-            "NE" -> return ProgramValue(if(left != right) 1 else 0)
-            "GT" -> return ProgramValue(if(left > right) 1 else 0)
-            "LT" -> return ProgramValue(if(left < right) 1 else 0)
-            "GTE" -> return ProgramValue(if(left >= right) 1 else 0)
-            "LTE" -> return ProgramValue(if(left <= right) 1 else 0)
-            "PLUS" -> return left + right
-            "MINUS" -> return left - right
-            "MULTIPLY" -> return left * right
-            "DIVIDE" -> return left / right
-            "REMAINDER" -> return left % right
+            "EQ" -> ProgramValue(if(left == right) 1 else 0)
+            "NE" -> ProgramValue(if(left != right) 1 else 0)
+            "GT" -> ProgramValue(if(left > right) 1 else 0)
+            "LT" -> ProgramValue(if(left < right) 1 else 0)
+            "GTE" -> ProgramValue(if(left >= right) 1 else 0)
+            "LTE" -> ProgramValue(if(left <= right) 1 else 0)
+            "PLUS" -> left + right
+            "MINUS" -> left - right
+            "MULTIPLY" -> left * right
+            "DIVIDE" -> left / right
+            "REMAINDER" -> left % right
             else -> throw Exception("Invalid operator: $op")
         }
+        if(k.children.size > 2)
+        {
+            return expr_underbar(k.children[2], context, x)
+        }
+        return x
     }
 }

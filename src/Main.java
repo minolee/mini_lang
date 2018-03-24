@@ -32,7 +32,7 @@ class Main
 //				System.out.println(pe);
 //			}
 //		});
-        Keyword root = p.parse(new File(test_file_dir+minilang_prefix+"parserTest.ml"), s);
+        Keyword root = p.parse(new File(test_file_dir+minilang_prefix+"miniTest.ml"), s);
 //        System.out.println(FunctionFinder.FindParseFunctionByName("case"));
         Interpreter i = Interpreter.GenerateInterpreter(root);
         i.interpret();

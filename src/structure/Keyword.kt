@@ -87,8 +87,8 @@ class Keyword
         children.add(child)
     }
 
-    fun interpret(context: ProgramState): ProgramValue<*>?
+    fun interpret(context: ProgramState): ProgramValue?
     {
-        return interpretFun.invoke(InterpreterFactoryObject, this, context) as ProgramValue<*>?
+        return interpretFun.invoke(InterpreterFactoryObject, this, context) as ProgramValue?
     }
 }

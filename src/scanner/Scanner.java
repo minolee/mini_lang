@@ -63,7 +63,7 @@ public class Scanner
 					}
 				}
 				keywordRegex = builder.toString();
-				Automaton a = Automaton.parseLine(keywordRegex, Scanner::transferFunction);
+				Automaton<Character> a = Automaton.parseLine(keywordRegex, Scanner::transferFunction);
 				a.setName(keywordName);
 				result.add(a);
 			}

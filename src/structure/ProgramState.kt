@@ -5,6 +5,6 @@ package structure
 class ProgramState
 {
     //scope의 variable list
-    val scope = HashMap<String, ProgramValue<*>>()
+    val scope = HashMap<String, ProgramValue>()
 }
 
