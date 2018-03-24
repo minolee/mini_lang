@@ -35,6 +35,7 @@ class ParseState(initial: Closure)
                 candidates.filter { popstate.currentState.items.contains(it) }
                 if (context.empty()) break
             }
+			if(candidates.size > 1) throw ParseException(ParseException.ExceptionType.AMBIGUOUS_GRAMMAR, "Reduce-Reduce Exception on ${candidates[0]}, ${candidates[1]}")
             //유일한 후보를 걸러냈으니 끝까지 track
             var target = candidates[0]
             while (target.previousItem() != null)
