@@ -3,7 +3,7 @@ package util;
 import interpreter.InterpretFunctionFactory;
 import parser.ParseFunctionFactory;
 import structure.Keyword;
-import structure.ProgramState;
+import structure.ProgramScope;
 
 import java.lang.reflect.Method;
 import java.util.List;
@@ -36,13 +36,13 @@ public class FunctionFinder
 		Method method;
 		try
 		{
-			method = InterpretFunctionFactory.class.getDeclaredMethod(name, Keyword.class, ProgramState.class);
+			method = InterpretFunctionFactory.class.getDeclaredMethod(name, Keyword.class, ProgramScope.class);
 		}
 		catch (NoSuchMethodException e)
 		{
             try
             {
-                return InterpretFunctionFactory.class.getDeclaredMethod("default", Keyword.class, ProgramState.class);
+                return InterpretFunctionFactory.class.getDeclaredMethod("default", Keyword.class, ProgramScope.class);
             }
             catch (NoSuchMethodException e1)
             {

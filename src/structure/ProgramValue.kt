@@ -3,15 +3,20 @@ package structure
 import exception.ProgramException
 
 //일단 string은 없는 타입이라고 하자
-class ProgramValue(x: Number)
+open class ProgramValue private constructor(x: Number, isF: Boolean)
 {
+
 	val value = x
+	val isFunction = isF
+	constructor(x: Number): this(x, false)
+	constructor(): this(0, true)
 
 	override fun toString(): String = value.toString()
 
 	operator fun plus(other: ProgramValue): ProgramValue
 	{
 		val result: ProgramValue
+		if(this.isFunction || other.isFunction) throw ProgramException(ProgramException.ExceptionType.ADD_FUNCTION)
 		if (other.value is Int && this.value is Int)
 		{
 			val a = other.value

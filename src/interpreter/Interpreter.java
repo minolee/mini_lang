@@ -1,7 +1,7 @@
 package interpreter;
 
 import structure.Keyword;
-import structure.ProgramState;
+import structure.ProgramScope;
 
 public class Interpreter
 {
@@ -33,7 +33,7 @@ public class Interpreter
 	//////////////////////////
 	public void interpret()
 	{
-		root.interpret(new ProgramState());
+		root.interpret(new ProgramScope());
 	}
 
 

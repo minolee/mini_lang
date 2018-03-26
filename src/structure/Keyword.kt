@@ -33,7 +33,7 @@ class Keyword
     private val interpretFun: Method
     val reduceFun: Method
     //local variable 준비
-    val boundVariables = ProgramState()
+    val boundVariables = ProgramScope()
     //leaf부터 시작해서 올라오면서 이 flag가 true인 keyword node를 만난다면 이 keyword는 이 keyword에 bound된 로컬 variable인거임
     var boundVariableStopHere = false
 
@@ -92,7 +92,7 @@ class Keyword
         children.add(child)
     }
 
-    fun interpret(context: ProgramState): ProgramValue?
+    fun interpret(context: ProgramScope): ProgramValue?
     {
         return interpretFun.invoke(InterpreterFactoryObject, this, context) as ProgramValue?
     }

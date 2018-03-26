@@ -2,7 +2,7 @@ package interpreter
 
 import exception.ProgramException
 import structure.Keyword
-import structure.ProgramState
+import structure.ProgramScope
 import structure.ProgramValue
 import java.util.*
 
@@ -13,12 +13,12 @@ class InterpretFunctionFactory
         val randomSeed = Random()
     }
 
-    fun default(k: Keyword, context: ProgramState)
+    fun default(k: Keyword, context: ProgramScope)
     {
         for (node in k.children) node.interpret(context)
     }
 
-    fun if_expr(k: Keyword, context: ProgramState): ProgramValue?
+    fun if_expr(k: Keyword, context: ProgramScope): ProgramValue?
     {
         val trueList = ArrayList<Keyword>()
         for (node in k.children)
@@ -29,7 +29,7 @@ class InterpretFunctionFactory
         return trueList[randomSeed.nextInt(trueList.size)].children[1].interpret(context)
     }
 
-    fun do_expr(k: Keyword, context: ProgramState): ProgramValue?
+    fun do_expr(k: Keyword, context: ProgramScope): ProgramValue?
     {
         try
         {
@@ -45,37 +45,38 @@ class InterpretFunctionFactory
         return null
     }
 
-    fun print_expr(k: Keyword, context: ProgramState)
+    fun print_expr(k: Keyword, context: ProgramScope)
     {
         println(k.children[0].interpret(context)!!)
     }
 
-    fun expr(k: Keyword, context: ProgramState): ProgramValue = pass(k, context)
-    fun expr6(k: Keyword, context: ProgramState): ProgramValue = pass(k, context)
-    fun expr8(k: Keyword, context: ProgramState): ProgramValue = pass(k, context)
-    fun expr9(k: Keyword, context: ProgramState): ProgramValue = pass(k, context)
-    fun expr10(k: Keyword, context: ProgramState): ProgramValue
+    fun expr(k: Keyword, context: ProgramScope): ProgramValue = pass(k, context)
+    fun expr6(k: Keyword, context: ProgramScope): ProgramValue = pass(k, context)
+    fun expr8(k: Keyword, context: ProgramScope): ProgramValue = pass(k, context)
+    fun expr9(k: Keyword, context: ProgramScope): ProgramValue = pass(k, context)
+    fun expr10(k: Keyword, context: ProgramScope): ProgramValue
     {
         val value = k.children[k.children.size - 1].interpret(context)
         return if (k.children.size > 1) -value!! else value!!
     }
 
-    fun base_case(k: Keyword, context: ProgramState): ProgramValue = when (k.children[0].keyword)
+    fun base_case(k: Keyword, context: ProgramScope): ProgramValue = when (k.children[0].keyword)
     {
         "EXPR" -> expr(k, context)
-        "ID" -> context.scope[k.children[0].strValue!!]!!
+        "ID" -> context.scope[k.children[0].strValue!!]!!.second
         "NUMBER" -> if (k.children[0].keywordType == "Int") ProgramValue(k.children[0].intValue!!) else ProgramValue(k.children[0].floatValue!!)
         else -> throw Exception("base_case: ${k.children[0].keyword}")
     }
 
-    fun assign_expr(k: Keyword, context: ProgramState)
+    fun assign_expr(k: Keyword, context: ProgramScope)
     {
         //함수가 없으니까 일단 이렇게 해도 됨
-        context.scope[k.children[0].strValue!!] = k.children[1].interpret(context)!!
+		val temp = context.scope[k.children[0].strValue!!]!!
+		context.scope[k.children[0].strValue!!] = Pair(temp.first, k.children[1].interpret(context)!!)
     }
 
     //[EXPR][EXPRX_] 형태의 EXPR
-    fun pass(k: Keyword, context: ProgramState): ProgramValue
+    fun pass(k: Keyword, context: ProgramScope): ProgramValue
     {
         val left = k.children[0].interpret(context)!! // base case 때문에 pass를 못 부름
         if (k.children.size > 1) return expr_underbar(k.children[1], context, left)
@@ -83,7 +84,7 @@ class InterpretFunctionFactory
     }
 
     //EXPR_ 형태
-    fun expr_underbar(k: Keyword, context: ProgramState, left: ProgramValue): ProgramValue
+    fun expr_underbar(k: Keyword, context: ProgramScope, left: ProgramValue): ProgramValue
     {
         val op = k.children[0].keyword
         val right = k.children[1].interpret(context)!!
@@ -109,4 +110,15 @@ class InterpretFunctionFactory
         }
         return x
     }
+
+	fun findId(k: Keyword, context: ProgramScope): Pair<Int, ProgramValue>?
+	{
+		var current = context
+		while(current.parent != current)
+		{
+			if(context.scope[k.strValue!!] != null) return context.scope[k.strValue!!]
+			current = current.parent
+		}
+		return null
+	}
 }
