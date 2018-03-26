@@ -37,6 +37,8 @@ class Keyword
     //leaf부터 시작해서 올라오면서 이 flag가 true인 keyword node를 만난다면 이 keyword는 이 keyword에 bound된 로컬 variable인거임
     var boundVariableStopHere = false
 
+    var original: String? = null
+
     companion object
     {
         @JvmField

@@ -12,7 +12,8 @@ class InterpretFunctionFactory
     {
         val randomSeed = Random()
     }
-    fun default(k: Keyword, context: ProgramState) 
+
+    fun default(k: Keyword, context: ProgramState)
     {
         for (node in k.children) node.interpret(context)
     }
@@ -20,11 +21,11 @@ class InterpretFunctionFactory
     fun if_expr(k: Keyword, context: ProgramState): ProgramValue?
     {
         val trueList = ArrayList<Keyword>()
-        for(node in k.children)
+        for (node in k.children)
         {
-            if(node.children[0].interpret(context)?.value == 1) trueList.add(node)
+            if (node.children[0].interpret(context)?.value == 1) trueList.add(node)
         }
-        if(trueList.size == 0) throw ProgramException(ProgramException.ExceptionType.ABORT)
+        if (trueList.size == 0) throw ProgramException(ProgramException.ExceptionType.ABORT)
         return trueList[randomSeed.nextInt(trueList.size)].children[1].interpret(context)
     }
 
@@ -32,12 +33,12 @@ class InterpretFunctionFactory
     {
         try
         {
-            while(true)
+            while (true)
             {
                 if_expr(k, context)
             }
         }
-        catch(e: ProgramException)
+        catch (e: ProgramException)
         {
 
         }
@@ -56,14 +57,14 @@ class InterpretFunctionFactory
     fun expr10(k: Keyword, context: ProgramState): ProgramValue
     {
         val value = k.children[k.children.size - 1].interpret(context)
-        return if(k.children.size > 1) -value!! else value!!
+        return if (k.children.size > 1) -value!! else value!!
     }
 
-    fun base_case(k: Keyword, context: ProgramState): ProgramValue = when(k.children[0].keyword)
+    fun base_case(k: Keyword, context: ProgramState): ProgramValue = when (k.children[0].keyword)
     {
         "EXPR" -> expr(k, context)
         "ID" -> context.scope[k.children[0].strValue!!]!!
-        "NUMBER" -> if(k.children[0].keywordType == "Int") ProgramValue(k.children[0].intValue!!) else ProgramValue(k.children[0].floatValue!!)
+        "NUMBER" -> if (k.children[0].keywordType == "Int") ProgramValue(k.children[0].intValue!!) else ProgramValue(k.children[0].floatValue!!)
         else -> throw Exception("base_case: ${k.children[0].keyword}")
     }
 
@@ -77,7 +78,7 @@ class InterpretFunctionFactory
     fun pass(k: Keyword, context: ProgramState): ProgramValue
     {
         val left = k.children[0].interpret(context)!! // base case 때문에 pass를 못 부름
-        if(k.children.size > 1) return expr_underbar(k.children[1], context, left)
+        if (k.children.size > 1) return expr_underbar(k.children[1], context, left)
         return left
     }
 
@@ -87,14 +88,14 @@ class InterpretFunctionFactory
         val op = k.children[0].keyword
         val right = k.children[1].interpret(context)!!
         //3번째 element도 고려해야 해!
-        val x: ProgramValue = when(op)
+        val x: ProgramValue = when (op)
         {
-            "EQ" -> ProgramValue(if(left == right) 1 else 0)
-            "NE" -> ProgramValue(if(left != right) 1 else 0)
-            "GT" -> ProgramValue(if(left > right) 1 else 0)
-            "LT" -> ProgramValue(if(left < right) 1 else 0)
-            "GTE" -> ProgramValue(if(left >= right) 1 else 0)
-            "LTE" -> ProgramValue(if(left <= right) 1 else 0)
+            "EQ" -> ProgramValue(if (left == right) 1 else 0)
+            "NE" -> ProgramValue(if (left != right) 1 else 0)
+            "GT" -> ProgramValue(if (left > right) 1 else 0)
+            "LT" -> ProgramValue(if (left < right) 1 else 0)
+            "GTE" -> ProgramValue(if (left >= right) 1 else 0)
+            "LTE" -> ProgramValue(if (left <= right) 1 else 0)
             "PLUS" -> left + right
             "MINUS" -> left - right
             "MULTIPLY" -> left * right
@@ -102,7 +103,7 @@ class InterpretFunctionFactory
             "REMAINDER" -> left % right
             else -> throw Exception("Invalid operator: $op")
         }
-        if(k.children.size > 2)
+        if (k.children.size > 2)
         {
             return expr_underbar(k.children[2], context, x)
         }
