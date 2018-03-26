@@ -2,6 +2,7 @@ package parser
 
 import structure.Keyword
 import java.util.*
+import kotlin.collections.ArrayList
 
 class ParseFunctionFactory
 {
@@ -37,7 +38,15 @@ class ParseFunctionFactory
         return temp
     }
 
-    fun case(context: List<Keyword>): List<Keyword> = findAndAddAll(context, "EXPR")
+    fun case(context: List<Keyword>): List<Keyword>
+    {
+        val temp = ArrayList<Keyword>()
+        for (node in context)
+        {
+            if(node.keyword != "THEN") temp.add(node)
+        }
+        return temp
+    }
 
     fun print_expr(context: List<Keyword>) = findAndAddAll(context, "EXPR")
 

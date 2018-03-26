@@ -1,5 +1,6 @@
 _SKIP : skip
 ABORT : abort
+FUNCTION : fun
 
 ASSIGN : :=
 COMMA : ,
@@ -33,6 +34,8 @@ REMAINDER : %
 
 LPARENTHESE : \(
 RPARENTHESE : \)
+LBRACE : {
+RBRACE : }
 
 PRINT : print
 

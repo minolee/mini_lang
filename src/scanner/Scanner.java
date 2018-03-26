@@ -139,7 +139,6 @@ public class Scanner
 		while (( line = reader.read() ) != -1)
 		{
 			final char x = (char) line;
-			System.out.print(x);
 			final char last = lastchar;
 			buf.append(last);
 			if (last != 0)

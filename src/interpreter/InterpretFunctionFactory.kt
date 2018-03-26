@@ -1,19 +1,47 @@
 package interpreter
 
+import exception.ProgramException
 import structure.Keyword
 import structure.ProgramState
 import structure.ProgramValue
+import java.util.*
 
 class InterpretFunctionFactory
 {
-    fun default(k: Keyword, context: ProgramState)
+    companion object
+    {
+        val randomSeed = Random()
+    }
+    fun default(k: Keyword, context: ProgramState) 
     {
         for (node in k.children) node.interpret(context)
     }
 
-    fun if_expr(k: Keyword, context: ProgramState)
+    fun if_expr(k: Keyword, context: ProgramState): ProgramValue?
     {
+        val trueList = ArrayList<Keyword>()
+        for(node in k.children)
+        {
+            if(node.children[0].interpret(context)?.value == 1) trueList.add(node)
+        }
+        if(trueList.size == 0) throw ProgramException(ProgramException.ExceptionType.ABORT)
+        return trueList[randomSeed.nextInt(trueList.size)].children[1].interpret(context)
+    }
 
+    fun do_expr(k: Keyword, context: ProgramState): ProgramValue?
+    {
+        try
+        {
+            while(true)
+            {
+                if_expr(k, context)
+            }
+        }
+        catch(e: ProgramException)
+        {
+
+        }
+        return null
     }
 
     fun print_expr(k: Keyword, context: ProgramState)

@@ -30,8 +30,12 @@ class Keyword
     var assigned: Boolean = false
     var parent: Keyword? = null
     val children = ArrayList<Keyword>()
-    val interpretFun: Method
+    private val interpretFun: Method
     val reduceFun: Method
+    //local variable 준비
+    val boundVariables = ProgramState()
+    //leaf부터 시작해서 올라오면서 이 flag가 true인 keyword node를 만난다면 이 keyword는 이 keyword에 bound된 로컬 variable인거임
+    var boundVariableStopHere = false
 
     companion object
     {
@@ -40,7 +44,6 @@ class Keyword
         @JvmField
         val EPSILON = Keyword("epsilon", true)
         val InterpreterFactoryObject = InterpretFunctionFactory()
-
     }
 
     constructor(keyword: String, isTerminal: Boolean, value: String) : this(keyword, isTerminal)

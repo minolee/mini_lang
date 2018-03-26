@@ -15,7 +15,7 @@ public class ProgramException extends Exception
 
 	public enum ExceptionType
 	{
-		ZERO_DIVISION("Divide by zero");
+		ZERO_DIVISION("Divide by zero"), ABORT("Aborted");
 		@Getter
 		final String msg;
 		ExceptionType(String s)
