@@ -1,128 +1,149 @@
 package parser
 
 import structure.Keyword
-import java.util.*
+import structure.ProgramValue
 import kotlin.collections.ArrayList
 
 class ParseFunctionFactory
 {
-    //순서가 매우 중요하므로 무조건 List 사용
-    fun default(context: List<Keyword>): List<Keyword>
-    {
-        val temp = ArrayList<Keyword>()
-        context.forEach { temp.add(it) }
-        return temp
-    }
-    fun program(context: List<Keyword>) = findAndAddAll(context, "LEGAL_SENTENCE").map{it.children[0]}.toList()
-    fun sentences(context: List<Keyword>) = findAndAddAll(context, "LEGAL_SENTENCE")
-    fun legal_sentence(context: List<Keyword>): List<Keyword>
-    {
-        val result: List<Keyword>
-        when(context[0].keyword)
-        {
-            "DO_EXPR", "IF_EXPR" -> result = Collections.singletonList(context[0])
-            else -> result =  Collections.singletonList(context[0].children[0]) //skip COMPOUND_EXPR
-        }
-        return result
-    }
-    fun if_expr(context: List<Keyword>) = case_list(context)
-    fun do_expr(context: List<Keyword>) = case_list(context)
+	//순서가 매우 중요하므로 무조건 List 사용
+	fun default(k: Keyword, context: List<Keyword>)
+	{
+		context.forEach(k::addChild)
+	}
 
-    fun case_list(context: List<Keyword>): List<Keyword>
-    {
-        val temp = ArrayList<Keyword>()
-        for (node in context)
-        {
-            temp.addAll(findAll(node, "CASE"))
-        }
-        return temp
-    }
+	fun program(k: Keyword, context: List<Keyword>)
+	{
+		if(context[0].keyword == "ID_DECLARATION") k.addChild(context[0])
+		findAndAddAll(context, "LEGAL_SENTENCE").map { it.children[0] }.forEach(k::addChild)
+	}
+	fun sentences(k: Keyword, context: List<Keyword>) = findAndAddAll(context, "LEGAL_SENTENCE").forEach(k::addChild)
+	fun legal_sentence(k: Keyword, context: List<Keyword>) = when (context[0].keyword)
+	{
+		"COMPOUND_EXPR" -> context[0].children.forEach(k::addChild) //skip COMPOUND_EXPR
+		else -> k.addChild(context[0])
+	}
 
-    fun case(context: List<Keyword>): List<Keyword>
-    {
-        val temp = ArrayList<Keyword>()
-        for (node in context)
-        {
-            if(node.keyword != "THEN") temp.add(node)
-        }
-        return temp
-    }
+	fun id_declaration(k: Keyword, context: List<Keyword>) = id_list(k, context)
+	fun id_list(k: Keyword, context: List<Keyword>) = findAndAddAll(context, "ID").forEach(k::addChild)
+	fun compound_exprs(k: Keyword, context: List<Keyword>) = findAndAddAll(context, "COMPOUND_EXPR").forEach(k::addChild)
+	fun compound_expr(k: Keyword, context: List<Keyword>)
+	{
+		for(node in context)
+		{
+			if(node.isTerminal) continue
+			if(node.keyword == "COMPOUND_EXPRS") node.children.forEach(k::addChild)
+			else k.addChild(node)
+		}
+	}
+	fun function_declaration(k: Keyword, context: List<Keyword>)
+	{
+		for (node in context)
+		{
+			if (node.keyword == "ID")
+			{
+				k.strValue = node.strValue!!
+			}
+			if (node.keyword == "ID_LIST")
+			{
+				node.children.forEach { k.boundVariables.scope[it.strValue!!] = ProgramValue.DummyValue() }
+			}
+			if (node.keyword == "COMPOUND_EXPR")
+			{
+				node.children.forEach(k::addChild)
+			}
+		}
+	}
 
-    fun print_expr(context: List<Keyword>) = findAndAddAll(context, "EXPR")
+	fun if_expr(k: Keyword, context: List<Keyword>) = case_list(k, context)
+	fun do_expr(k: Keyword, context: List<Keyword>) = case_list(k, context)
 
-    fun base_case(context: List<Keyword>): List<Keyword>
-    {
-        val result = ArrayList<Keyword>()
-        for (node in context)
-        {
-            when (node.keyword)
-            {
-                "EXPR", "ID", "NUMBER" -> result.add(node)
-            }
-        }
-        return result
-    }
+	fun case_list(k: Keyword, context: List<Keyword>)
+	{
+		for (node in context)
+		{
+			findAll(node, "CASE").forEach(k::addChild)
+		}
+	}
 
-    fun concurrent_expr(context: List<Keyword>) = concurrent_expr_(context)
+	fun case(k: Keyword, context: List<Keyword>)
+	{
 
-    fun concurrent_expr_(context: List<Keyword>): List<Keyword>
-    {
-        val result = ArrayList<Keyword>()
-        for (node in context)
-        {
-            when (node.keyword)
-            {
-                "ID", "EXPR" -> result.add(node)
-                "CONCURRENT_EXPR_" -> result.addAll(node.children)
-            }
-        }
-        return result
-    }
+		for (node in context)
+		{
+			if (node.keyword != "THEN") k.addChild(node)
+		}
 
-    fun sequence_expr(context: List<Keyword>) = findAndAddAll(context, "ASSIGN_EXPR")
+	}
 
-    fun assign_expr(context: List<Keyword>): List<Keyword>
-    {
-        val result = ArrayList<Keyword>()
-        for (node in context)
-        {
-            when (node.keyword)
-            {
-                "ID", "EXPR" -> result.add(node)
-            }
-        }
-        return result
-    }
+	fun print_expr(k: Keyword, context: List<Keyword>) = findAndAddAll(context, "EXPR").forEach(k::addChild)
+
+	fun base_case(k: Keyword, context: List<Keyword>)
+	{
+		for (node in context)
+		{
+			when (node.keyword)
+			{
+				"EXPR", "ID", "NUMBER" -> k.addChild(node)
+			}
+		}
+	}
+
+	fun concurrent_expr(k: Keyword, context: List<Keyword>) = concurrent_expr_(k, context)
+
+	fun concurrent_expr_(k: Keyword, context: List<Keyword>)
+	{
+		for (node in context)
+		{
+			when (node.keyword)
+			{
+				"ID", "EXPR" -> k.addChild(node)
+				"CONCURRENT_EXPR_" -> node.children.forEach(k::addChild)
+			}
+		}
+	}
+
+	fun sequence_expr(k: Keyword, context: List<Keyword>) = findAndAddAll(context, "ASSIGN_EXPR").forEach(k::addChild)
+
+	fun assign_expr(k: Keyword, context: List<Keyword>)
+	{
+		for (node in context)
+		{
+			when (node.keyword)
+			{
+				"ID", "EXPR" -> k.addChild(node)
+			}
+		}
+	}
 
 
-    private fun findAndAddAll(context: List<Keyword>, toAdd: String, iterative: Boolean = false): List<Keyword>
-    {
-        val result = ArrayList<Keyword>()
-        for(c in context)
-            result.addAll(findAll(c, toAdd, iterative))
-        return result
-    }
+	private fun findAndAddAll(context: List<Keyword>, toAdd: String, iterative: Boolean = false): List<Keyword>
+	{
+		val result = ArrayList<Keyword>()
+		for (c in context) result.addAll(findAll(c, toAdd, iterative))
+		return result
+	}
 
-    private fun findAll(from: Keyword, keyword: String, iterative: Boolean = false): List<Keyword>
-    {
-        val result = ArrayList<Keyword>()
-        if (from.keyword == keyword)
-        {
-            result.add(from)
-            if (!iterative) return result
-        }
+	private fun findAll(from: Keyword, keyword: String, iterative: Boolean = false): List<Keyword>
+	{
+		val result = ArrayList<Keyword>()
+		if (from.keyword == keyword)
+		{
+			result.add(from)
+			if (!iterative) return result
+		}
 
-        for (node in from.children)
-        {
-            if (node.keyword == keyword)
-            {
-                result.add(node)
-                if (!iterative) continue
-            }
-            node.children.forEach { result.addAll(findAll(it, keyword)) }
-        }
-        return result
-    }
+		for (node in from.children)
+		{
+			if (node.keyword == keyword)
+			{
+				result.add(node)
+				if (!iterative) continue
+			}
+			node.children.forEach { result.addAll(findAll(it, keyword)) }
+		}
+		return result
+	}
 
 
 }

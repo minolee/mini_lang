@@ -47,7 +47,7 @@ class ParseState(initial: Closure)
             //이 시점에서 item의 맨 앞까지 pop했으므로 유도 keyword를 push하고 종료
             reduceContext.reverse()
             val push = target.generatingKeyword
-            (push.reduceFun.invoke(ParseFunctionFactory(), reduceContext) as List<*>).forEach { push.addChild(it as Keyword) }
+            push.reduce(reduceContext)
             current.currentKeyword = push
 
             context.push(current)

@@ -1,6 +1,7 @@
 package util;
 
 import interpreter.InterpretFunctionFactory;
+import interpreter.ScopeGeneratorFunctionFactory;
 import parser.ParseFunctionFactory;
 import structure.Keyword;
 import structure.ProgramScope;
@@ -15,13 +16,13 @@ public class FunctionFinder
 		Method method;
 		try
 		{
-			method = ParseFunctionFactory.class.getDeclaredMethod(name, List.class);
+			method = ParseFunctionFactory.class.getDeclaredMethod(name, Keyword.class, List.class);
 		}
 		catch (NoSuchMethodException e)
 		{
 			try
 			{
-				return ParseFunctionFactory.class.getDeclaredMethod("default", List.class);
+				return ParseFunctionFactory.class.getDeclaredMethod("default", Keyword.class, List.class);
 			}
 			catch (NoSuchMethodException e1)
 			{
@@ -36,18 +37,39 @@ public class FunctionFinder
 		Method method;
 		try
 		{
-			method = InterpretFunctionFactory.class.getDeclaredMethod(name, Keyword.class, ProgramScope.class);
+			method = InterpretFunctionFactory.class.getDeclaredMethod(name, Keyword.class);
 		}
 		catch (NoSuchMethodException e)
 		{
             try
             {
-                return InterpretFunctionFactory.class.getDeclaredMethod("default", Keyword.class, ProgramScope.class);
+                return InterpretFunctionFactory.class.getDeclaredMethod("default", Keyword.class);
             }
             catch (NoSuchMethodException e1)
             {
                 return null;
             }
+		}
+		return method;
+	}
+
+	public static Method FindScopeGenerationFunction(String name)
+	{
+		Method method;
+		try
+		{
+			method = ScopeGeneratorFunctionFactory.class.getDeclaredMethod(name, Keyword.class);
+		}
+		catch (NoSuchMethodException e)
+		{
+			try
+			{
+				return ScopeGeneratorFunctionFactory.class.getDeclaredMethod("default", Keyword.class);
+			}
+			catch (NoSuchMethodException e1)
+			{
+				return null;
+			}
 		}
 		return method;
 	}

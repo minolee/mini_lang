@@ -5,7 +5,7 @@ package structure
 class ProgramScope
 {
 	//scope의 variable list
-	val scope = HashMap<String, Pair<Int, ProgramValue>>()
+	val scope = HashMap<String, ProgramValue>()
 	var parent: ProgramScope = this
 }
 

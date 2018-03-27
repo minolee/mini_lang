@@ -3,13 +3,19 @@ package structure
 import exception.ProgramException
 
 //일단 string은 없는 타입이라고 하자
-open class ProgramValue private constructor(x: Number, isF: Boolean)
+class ProgramValue private constructor(x: Number, isF: Boolean, dec: Boolean)
 {
 
 	val value = x
 	val isFunction = isF
-	constructor(x: Number): this(x, false)
-	constructor(): this(0, true)
+	val declared = dec
+	constructor(x: Number): this(x, false, true)
+	constructor(): this(0, true, true)
+
+	companion object
+	{
+		@JvmStatic fun DummyValue() = ProgramValue(0, false, false)
+	}
 
 	override fun toString(): String = value.toString()
 

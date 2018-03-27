@@ -15,6 +15,7 @@ public class Interpreter
 	private Interpreter(Keyword root)
 	{
 		this.root = root;
+		generateKeywordScope();
 	}
 
 	////////////////////////////////////
@@ -25,7 +26,7 @@ public class Interpreter
 	{
 		//scope를 keyword에 저장할지, interpreter에 따로 저장할지 생각해 봐야 함
 		//scope 추적 함수를 만들어야 하나?
-		root.getChildren();
+		this.root.generateScope();
 	}
 
 	//////////////////////////
@@ -33,7 +34,7 @@ public class Interpreter
 	//////////////////////////
 	public void interpret()
 	{
-		root.interpret(new ProgramScope());
+		root.interpret();
 	}
 
 

@@ -12,10 +12,13 @@ public class ProgramException extends Exception
 	{
 		super(type.getMsg());
 	}
-
+	public ProgramException(ExceptionType type, String additionalMsg)
+	{
+		super(type.getMsg() +": "+ additionalMsg);
+	}
 	public enum ExceptionType
 	{
-		ZERO_DIVISION("Divide by zero"), ABORT("Aborted"), ADD_FUNCTION("Trying to add function");
+		ZERO_DIVISION("Divide by zero"), ABORT("Aborted"), ADD_FUNCTION("Trying to add function"), PARAM_NOT_MATCH("Parameter not match");
 		@Getter
 		final String msg;
 		ExceptionType(String s)
