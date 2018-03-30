@@ -2,9 +2,9 @@ package structure
 
 import interpreter.InterpretFunctionFactory
 import interpreter.ScopeGeneratorFunctionFactory
-import parser.ParseFunctionFactory
+import parser.ReduceFunctionFactory
+import util.ClassFinder
 import util.FunctionFinder
-import java.lang.reflect.Method
 
 open class Keyword
 {
@@ -14,9 +14,6 @@ open class Keyword
 		this.keyword = keyword
 		this.isTerminal = isTerminal
 		this.isVisible = isVisible
-		this.reduceFun = FunctionFinder.FindParseFunctionByName(keyword.toLowerCase())
-		this.scopeGenFun = FunctionFinder.FindScopeGenerationFunction(keyword.toLowerCase())
-		this.interpretFun = FunctionFinder.FindInterpretFunctionByName(keyword.toLowerCase())
 	}
 
 	constructor(keyword: String, isTerminal: Boolean) : this(keyword, isTerminal, true)
@@ -33,9 +30,6 @@ open class Keyword
 	var assigned: Boolean = false
 	var parent: Keyword? = null
 	val children = ArrayList<Keyword>()
-	private val interpretFun: Method
-	val scopeGenFun: Method
-	val reduceFun: Method
 	//local variable 준비
 	val boundVariables = ProgramScope()
 	var original: String? = null
@@ -49,7 +43,7 @@ open class Keyword
 		val EPSILON = Keyword("epsilon", true)
 		val InterpreterFactoryObject = InterpretFunctionFactory()
 		val ScopeGenFunFactoryObject = ScopeGeneratorFunctionFactory()
-		val ParseFunctionFactoryObject = ParseFunctionFactory()
+		val ParseFunctionFactoryObject = ReduceFunctionFactory()
 	}
 
 	constructor(keyword: String, isTerminal: Boolean, value: String) : this(keyword, isTerminal)
@@ -97,14 +91,24 @@ open class Keyword
 		children.add(child)
 	}
 
-	fun reduce(context: List<Keyword>) = reduceFun.invoke(ParseFunctionFactoryObject, this, context)
+	fun reduce(context: List<Keyword>) = FunctionFinder.FindParseFunctionByName(keyword.toLowerCase()).invoke(ParseFunctionFactoryObject, this, context)
 
-	fun interpret() = interpretFun.invoke(InterpreterFactoryObject, this) as ProgramValue?
+	fun interpret() = FunctionFinder.FindInterpretFunctionByName(keyword.toLowerCase()).invoke(InterpreterFactoryObject, this) as ProgramValue?
 
 	fun generateScope()
 	{
-		scopeGenFun.invoke(ScopeGenFunFactoryObject, this)
+		FunctionFinder.FindScopeGenerationFunction(keyword.toLowerCase()).invoke(ScopeGenFunFactoryObject, this)
 	}
 
+
+	fun rebuild(): Keyword
+	{
+		val x = ClassFinder.FindProgramStructureByName(keyword) ?: return this
+		val instance = x.getDeclaredConstructor(Keyword::class.java).newInstance(this)
+		instance.parent = this.parent
+		instance.boundVariables.parent = this.parent?.boundVariables?: instance.boundVariables
+		children.forEach(instance::addChild)
+		return instance
+	}
 
 }

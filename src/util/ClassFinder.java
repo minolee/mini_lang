@@ -13,8 +13,7 @@ public class ClassFinder
 		}
 		catch (ClassNotFoundException e)
 		{
-			e.printStackTrace();
-			return Keyword.class;
+			return null;
 		}
 	}
 }

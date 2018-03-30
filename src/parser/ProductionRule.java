@@ -1,7 +1,9 @@
 package parser;
 
 import structure.Keyword;
+import util.ClassFinder;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -68,5 +70,18 @@ class ProductionRule
 	public Keyword getGeneratingKeyword()
 	{
 		return new Keyword(generatingKeyword);
+	}
+
+	public Keyword getPushKeyword()
+	{
+		try
+		{
+			return ClassFinder.FindProgramStructureByName(generatingKeyword.getKeyword()).getDeclaredConstructor(Keyword.class).newInstance(generatingKeyword);
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+			return new Keyword(generatingKeyword);
+		}
 	}
 }

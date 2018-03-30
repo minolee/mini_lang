@@ -4,7 +4,7 @@ import structure.Keyword
 import structure.ProgramValue
 import kotlin.collections.ArrayList
 
-class ParseFunctionFactory
+class ReduceFunctionFactory
 {
 	//순서가 매우 중요하므로 무조건 List 사용
 	fun default(k: Keyword, context: List<Keyword>)
@@ -32,7 +32,6 @@ class ParseFunctionFactory
 		for(node in context)
 		{
 			if(node.isTerminal) continue
-			if(node.keyword == "COMPOUND_EXPRS") node.children.forEach(k::addChild)
 			else k.addChild(node)
 		}
 	}

@@ -2,13 +2,15 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="c76b6e5d-589d-4007-8e03-51f75cec4a3c" name="Default" comment="">
-      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/hamcrest_core_1_3.xml" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/src/structure/ProgramNode.kt" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/src/tests/ClassLoaderTest.java" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/src/util/ClassFinder.java" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change beforePath="$PROJECT_DIR$/mini-lang.iml" afterPath="$PROJECT_DIR$/mini-lang.iml" />
+      <change beforePath="$PROJECT_DIR$/lang_def/minilang_grammar" afterPath="$PROJECT_DIR$/lang_def/minilang_grammar" />
+      <change beforePath="$PROJECT_DIR$/src/interpreter/Interpreter.java" afterPath="$PROJECT_DIR$/src/interpreter/Interpreter.java" />
+      <change beforePath="$PROJECT_DIR$/src/parser/ParseFunctionFactory.kt" afterPath="$PROJECT_DIR$/src/parser/ReduceFunctionFactory.kt" />
+      <change beforePath="$PROJECT_DIR$/src/parser/ProductionRule.java" afterPath="$PROJECT_DIR$/src/parser/ProductionRule.java" />
       <change beforePath="$PROJECT_DIR$/src/structure/Keyword.kt" afterPath="$PROJECT_DIR$/src/structure/Keyword.kt" />
+      <change beforePath="$PROJECT_DIR$/src/structure/ProgramNode.kt" afterPath="$PROJECT_DIR$/src/structure/ProgramNode.kt" />
+      <change beforePath="$PROJECT_DIR$/src/util/ClassFinder.java" afterPath="$PROJECT_DIR$/src/util/ClassFinder.java" />
+      <change beforePath="$PROJECT_DIR$/src/util/FunctionFinder.java" afterPath="$PROJECT_DIR$/src/util/FunctionFinder.java" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -18,67 +20,78 @@
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
+  <component name="DockManager">
+    <window id="1">
+      <content type="file-editors">
+        <state>
+          <leaf>
+            <file leaf-file-name="minilang_miniTest.ml" pinned="false" current-in-tab="true">
+              <entry file="file://$PROJECT_DIR$/testfiles/minilang_miniTest.ml">
+                <provider selected="true" editor-type-id="text-editor">
+                  <state relative-caret-position="133">
+                    <caret line="7" column="10" lean-forward="true" selection-start-line="7" selection-start-column="10" selection-end-line="7" selection-end-column="10" />
+                    <folding />
+                  </state>
+                </provider>
+              </entry>
+            </file>
+            <file leaf-file-name="minilang_grammar" pinned="false" current-in-tab="false">
+              <entry file="file://$PROJECT_DIR$/lang_def/minilang_grammar">
+                <provider selected="true" editor-type-id="text-editor">
+                  <state relative-caret-position="304">
+                    <caret line="16" column="20" lean-forward="true" selection-start-line="16" selection-start-column="20" selection-end-line="16" selection-end-column="20" />
+                    <folding />
+                  </state>
+                </provider>
+              </entry>
+            </file>
+          </leaf>
+        </state>
+      </content>
+    </window>
+  </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
       <file leaf-file-name="InterpretFunctionFactory.kt" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/interpreter/InterpretFunctionFactory.kt">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="531">
-              <caret line="134" column="41" lean-forward="false" selection-start-line="134" selection-start-column="41" selection-end-line="134" selection-end-column="41" />
+            <state relative-caret-position="210">
+              <caret line="24" column="0" lean-forward="false" selection-start-line="24" selection-start-column="0" selection-end-line="24" selection-end-column="0" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="ClassFinder.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/util/ClassFinder.java">
+      <file leaf-file-name="Parser.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/parser/Parser.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="247">
-              <caret line="13" column="40" lean-forward="true" selection-start-line="13" selection-start-column="40" selection-end-line="13" selection-end-column="40" />
+            <state relative-caret-position="303">
+              <caret line="610" column="33" lean-forward="false" selection-start-line="610" selection-start-column="32" selection-end-line="610" selection-end-column="33" />
               <folding>
-                <element signature="e#70#100#0" expanded="true" />
+                <element signature="docComment;class#Parser#0" expanded="false" />
+                <element signature="method#Parser#0;class#Parser#0" expanded="false" />
+                <element signature="docComment;method#GenerateParser#0;class#Parser#0" expanded="false" />
+                <element signature="e#2302#2333#0" expanded="false" />
+                <element signature="method#generateKeywords#0;class#Parser#0" expanded="false" />
+                <element signature="method#translateFunction#0;class#Parser#0" expanded="false" />
+                <element signature="docComment;method#translateToSimpleForm#0;class#Parser#0" expanded="false" />
+                <element signature="method#translateToSimpleForm#0;class#Parser#0" expanded="false" />
+                <element signature="method#mergeDuplicateGrammar#0;class#Parser#0" expanded="false" />
+                <element signature="method#getFirst#0;class#Parser#0" expanded="false" />
+                <element signature="docComment;method#generateTable#0;class#Parser#0" expanded="false" />
+                <element signature="n#!!doc;n#FirstSetParseTree#0;n#Parser#0" expanded="false" />
+                <element signature="class#FirstSetParseTree#0;class#Parser#0" expanded="false" />
+                <element signature="method#FirstSetParseTree#0;class#FirstSetParseTree#0;class#Parser#0" expanded="false" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="ClassLoaderTest.java" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/src/tests/ClassLoaderTest.java">
+      <file leaf-file-name="ReduceFunctionFactory.kt" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/parser/ReduceFunctionFactory.kt">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="395">
-              <caret line="22" column="9" lean-forward="true" selection-start-line="22" selection-start-column="9" selection-end-line="22" selection-end-column="9" />
-              <folding>
-                <element signature="imports" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="Keyword.kt" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/structure/Keyword.kt">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="76">
-              <caret line="8" column="5" lean-forward="false" selection-start-line="8" selection-start-column="5" selection-end-line="8" selection-end-column="5" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="ProgramNode.kt" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/structure/ProgramNode.kt">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="114">
-              <caret line="6" column="0" lean-forward="false" selection-start-line="6" selection-start-column="0" selection-end-line="6" selection-end-column="0" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="ParseFunctionFactory.kt" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/parser/ParseFunctionFactory.kt">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="593">
-              <caret line="112" column="9" lean-forward="false" selection-start-line="112" selection-start-column="9" selection-end-line="112" selection-end-column="9" />
+            <state relative-caret-position="494">
+              <caret line="74" column="0" lean-forward="true" selection-start-line="74" selection-start-column="0" selection-end-line="74" selection-end-column="0" />
               <folding>
                 <element signature="e#16#106#0" expanded="true" />
               </folding>
@@ -86,11 +99,34 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="minilang_miniTest.ml" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/testfiles/minilang_miniTest.ml">
+      <file leaf-file-name="Keyword.kt" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/structure/Keyword.kt">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="133">
-              <caret line="7" column="10" lean-forward="false" selection-start-line="7" selection-start-column="10" selection-end-line="7" selection-end-column="10" />
+            <state relative-caret-position="1329">
+              <caret line="112" column="0" lean-forward="true" selection-start-line="112" selection-start-column="0" selection-end-line="112" selection-end-column="0" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Interpreter.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/interpreter/Interpreter.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="259">
+              <caret line="38" column="24" lean-forward="false" selection-start-line="38" selection-start-column="24" selection-end-line="38" selection-end-column="24" />
+              <folding>
+                <element signature="e#1110#1111#0" expanded="true" />
+                <element signature="e#1133#1134#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="FunctionFinder.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/util/FunctionFinder.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="1236">
+              <caret line="72" column="0" lean-forward="false" selection-start-line="72" selection-start-column="0" selection-end-line="72" selection-end-column="0" />
               <folding />
             </state>
           </provider>
@@ -99,8 +135,8 @@
       <file leaf-file-name="ScopeGeneratorFunctionFactory.kt" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/interpreter/ScopeGeneratorFunctionFactory.kt">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="285">
-              <caret line="15" column="29" lean-forward="false" selection-start-line="15" selection-start-column="29" selection-end-line="15" selection-end-column="29" />
+            <state relative-caret-position="228">
+              <caret line="12" column="0" lean-forward="false" selection-start-line="12" selection-start-column="0" selection-end-line="12" selection-end-column="0" />
               <folding>
                 <element signature="e#21#75#0" expanded="true" />
               </folding>
@@ -108,14 +144,22 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Interpreter.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/interpreter/Interpreter.java">
+      <file leaf-file-name="ProgramNode.kt" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/structure/ProgramNode.kt">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="422">
-              <caret line="36" column="0" lean-forward="false" selection-start-line="36" selection-start-column="0" selection-end-line="36" selection-end-column="0" />
-              <folding>
-                <element signature="e#765#766#0" expanded="true" />
-              </folding>
+            <state relative-caret-position="304">
+              <caret line="16" column="45" lean-forward="false" selection-start-line="16" selection-start-column="45" selection-end-line="16" selection-end-column="45" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="ParseState.kt" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/parser/ParseState.kt">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="343">
+              <caret line="59" column="17" lean-forward="true" selection-start-line="59" selection-start-column="17" selection-end-line="59" selection-end-column="17" />
+              <folding />
             </state>
           </provider>
         </entry>
@@ -203,7 +247,6 @@
         <option value="$PROJECT_DIR$/src/scanner/KeywordGenerator.java" />
         <option value="$PROJECT_DIR$/src/automaton/State.java" />
         <option value="$PROJECT_DIR$/src/automaton/RegexTree.java" />
-        <option value="$PROJECT_DIR$/src/parser/ProductionRule.java" />
         <option value="$PROJECT_DIR$/src/parser/Item.java" />
         <option value="$PROJECT_DIR$/src/structure/ProgramObject.kt" />
         <option value="$PROJECT_DIR$/src/structure/Value.kt" />
@@ -216,26 +259,28 @@
         <option value="$PROJECT_DIR$/src/structure/ProgramState.kt" />
         <option value="$PROJECT_DIR$/testfiles/minilang_miniTest.ml" />
         <option value="$PROJECT_DIR$/src/structure/ProgramScope.kt" />
-        <option value="$PROJECT_DIR$/src/interpreter/Interpreter.java" />
         <option value="$PROJECT_DIR$/src/util/FunctionFinder.java" />
         <option value="$PROJECT_DIR$/src/structure/ProgramFunction.kt" />
-        <option value="$PROJECT_DIR$/lang_def/minilang_grammar" />
-        <option value="$PROJECT_DIR$/src/parser/ParseFunctionFactory.kt" />
         <option value="$PROJECT_DIR$/src/exception/ProgramException.java" />
         <option value="$PROJECT_DIR$/src/structure/ProgramValue.kt" />
-        <option value="$PROJECT_DIR$/src/parser/ParseState.kt" />
         <option value="$PROJECT_DIR$/src/interpreter/ScopeGeneratorFunctionFactory.kt" />
         <option value="$PROJECT_DIR$/src/interpreter/InterpretFunctionFactory.kt" />
-        <option value="$PROJECT_DIR$/src/structure/ProgramNode.kt" />
-        <option value="$PROJECT_DIR$/src/structure/Keyword.kt" />
         <option value="$PROJECT_DIR$/src/tests/ClassLoaderTest.java" />
+        <option value="$PROJECT_DIR$/src/structure/ProgramNode.kt" />
+        <option value="$PROJECT_DIR$/src/parser/ProductionRule.java" />
+        <option value="$PROJECT_DIR$/src/parser/ParseState.kt" />
         <option value="$PROJECT_DIR$/src/util/ClassFinder.java" />
+        <option value="$PROJECT_DIR$/src/interpreter/Interpreter.java" />
+        <option value="$PROJECT_DIR$/src/structure/Keyword.kt" />
+        <option value="$PROJECT_DIR$/src/parser/ParseFunctionFactory.kt" />
+        <option value="$PROJECT_DIR$/lang_def/minilang_grammar" />
+        <option value="$PROJECT_DIR$/src/parser/ReduceFunctionFactory.kt" />
       </list>
     </option>
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="49" />
-    <option name="y" value="-22" />
+    <option name="x" value="-3" />
+    <option name="y" value="-13" />
     <option name="width" value="1936" />
     <option name="height" value="1056" />
   </component>
@@ -357,7 +402,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="JUnit.ClassLoaderTest.classLoadTest">
+  <component name="RunManager" selected="Application.Main">
     <configuration default="true" type="Applet" factoryName="Applet">
       <option name="HTML_USED" value="false" />
       <option name="WIDTH" value="400" />
@@ -511,9 +556,9 @@
     </list>
     <recent_temporary>
       <list size="3">
-        <item index="0" class="java.lang.String" itemvalue="JUnit.ClassLoaderTest.classLoadTest" />
-        <item index="1" class="java.lang.String" itemvalue="JUnit.ScannerTest.parseRangeTest" />
-        <item index="2" class="java.lang.String" itemvalue="Application.Main" />
+        <item index="0" class="java.lang.String" itemvalue="Application.Main" />
+        <item index="1" class="java.lang.String" itemvalue="JUnit.ClassLoaderTest.classLoadTest" />
+        <item index="2" class="java.lang.String" itemvalue="JUnit.ScannerTest.parseRangeTest" />
       </list>
     </recent_temporary>
   </component>
@@ -555,6 +600,9 @@
     <history-entry file="ClassLoaderTest_classLoadTest - 2018.03.30 at 11h 47m 35s.xml">
       <configuration name="ClassLoaderTest.classLoadTest" configurationId="JUnit" />
     </history-entry>
+    <history-entry file="ClassLoaderTest_classLoadTest - 2018.03.30 at 13h 37m 12s.xml">
+      <configuration name="ClassLoaderTest.classLoadTest" configurationId="JUnit" />
+    </history-entry>
     <history-entry file="ScannerTest_parseRangeTest - 2018.03.30 at 11h 39m 59s.xml">
       <configuration name="ScannerTest.parseRangeTest" configurationId="JUnit" />
     </history-entry>
@@ -567,9 +615,9 @@
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32908705" sideWeight="0.44166666" order="10" side_tool="false" content_ui="tabs" />
       <window_info id="Palette&#9;" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.3057325" sideWeight="0.54583335" order="7" side_tool="true" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.30254778" sideWeight="0.52916664" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.3057325" sideWeight="0.45416668" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3057325" sideWeight="0.45416668" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
@@ -577,7 +625,7 @@
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="UI Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.30254778" sideWeight="0.47291666" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.30254778" sideWeight="0.47083333" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="true" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
@@ -609,9 +657,15 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/interpreter/Interpreter.java</url>
-          <line>36</line>
+          <line>20</line>
           <properties />
-          <option name="timeStamp" value="86" />
+          <option name="timeStamp" value="94" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/util/FunctionFinder.java</url>
+          <line>59</line>
+          <properties />
+          <option name="timeStamp" value="96" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="kotlin-line">
           <url>file://$PROJECT_DIR$/src/interpreter/InterpretFunctionFactory.kt</url>
@@ -619,13 +673,20 @@
           <properties />
           <option name="timeStamp" value="93" />
         </line-breakpoint>
+        <line-breakpoint enabled="true" type="kotlin-line">
+          <url>file://$PROJECT_DIR$/src/interpreter/ScopeGeneratorFunctionFactory.kt</url>
+          <line>15</line>
+          <properties />
+          <option name="timeStamp" value="97" />
+        </line-breakpoint>
       </breakpoints>
-      <option name="time" value="94" />
+      <option name="time" value="98" />
     </breakpoint-manager>
     <watches-manager>
       <configuration name="Application">
         <watch expression="context.get(0).currentKeyword.boundVariables" />
         <watch expression="((Keyword)node).root" custom="structure.Keyword" />
+        <watch expression="((Keyword)((java.util.ArrayList)((program)this.root).children).get(2)).children" custom="structure.ProgramNode.program,java.util.ArrayList,structure.Keyword" />
       </configuration>
     </watches-manager>
   </component>
@@ -774,44 +835,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/parser/ProductionRule.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="476">
-          <caret line="67" column="19" lean-forward="false" selection-start-line="67" selection-start-column="19" selection-end-line="67" selection-end-column="19" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/parser/Parser.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="5662">
-          <caret line="607" column="0" lean-forward="false" selection-start-line="607" selection-start-column="0" selection-end-line="607" selection-end-column="0" />
-          <folding>
-            <element signature="docComment;class#Parser#0" expanded="false" />
-            <element signature="method#Parser#0;class#Parser#0" expanded="false" />
-            <element signature="docComment;method#GenerateParser#0;class#Parser#0" expanded="false" />
-            <element signature="e#2302#2333#0" expanded="false" />
-            <element signature="method#generateKeywords#0;class#Parser#0" expanded="false" />
-            <element signature="method#translateFunction#0;class#Parser#0" expanded="false" />
-            <element signature="docComment;method#translateToSimpleForm#0;class#Parser#0" expanded="false" />
-            <element signature="method#translateToSimpleForm#0;class#Parser#0" expanded="false" />
-            <element signature="method#mergeDuplicateGrammar#0;class#Parser#0" expanded="false" />
-            <element signature="method#getFirst#0;class#Parser#0" expanded="false" />
-            <element signature="docComment;method#generateTable#0;class#Parser#0" expanded="false" />
-            <element signature="n#!!doc;n#FirstSetParseTree#0;n#Parser#0" expanded="false" />
-            <element signature="class#FirstSetParseTree#0;class#Parser#0" expanded="false" />
-            <element signature="method#FirstSetParseTree#0;class#FirstSetParseTree#0;class#Parser#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/util/FunctionFinder.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="297">
-          <caret line="39" column="91" lean-forward="true" selection-start-line="39" selection-start-column="91" selection-end-line="39" selection-end-column="91" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/Main.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="228">
@@ -855,14 +878,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/parser/ParseState.kt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-4">
-          <caret line="51" column="0" lean-forward="true" selection-start-line="51" selection-start-column="0" selection-end-line="51" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/structure/ProgramFunction.kt">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="152">
@@ -871,80 +886,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/lang_def/minilang_grammar">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="346">
-          <caret line="20" column="34" lean-forward="false" selection-start-line="20" selection-start-column="34" selection-end-line="20" selection-end-column="34" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/parser/ParseFunctionFactory.kt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="593">
-          <caret line="112" column="9" lean-forward="false" selection-start-line="112" selection-start-column="9" selection-end-line="112" selection-end-column="9" />
-          <folding>
-            <element signature="e#16#106#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="jar://$PROJECT_DIR$/lib/kotlin-stdlib-sources.jar!/generated/_Collections.kt">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="210">
           <caret line="1496" column="0" lean-forward="false" selection-start-line="1496" selection-start-column="0" selection-end-line="1496" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/testfiles/minilang_miniTest.ml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="133">
-          <caret line="7" column="10" lean-forward="false" selection-start-line="7" selection-start-column="10" selection-end-line="7" selection-end-column="10" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/interpreter/ScopeGeneratorFunctionFactory.kt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="285">
-          <caret line="15" column="29" lean-forward="false" selection-start-line="15" selection-start-column="29" selection-end-line="15" selection-end-column="29" />
-          <folding>
-            <element signature="e#21#75#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/interpreter/Interpreter.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="422">
-          <caret line="36" column="0" lean-forward="false" selection-start-line="36" selection-start-column="0" selection-end-line="36" selection-end-column="0" />
-          <folding>
-            <element signature="e#765#766#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/interpreter/InterpretFunctionFactory.kt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="531">
-          <caret line="134" column="41" lean-forward="false" selection-start-line="134" selection-start-column="41" selection-end-line="134" selection-end-column="41" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/structure/Keyword.kt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="76">
-          <caret line="8" column="5" lean-forward="false" selection-start-line="8" selection-start-column="5" selection-end-line="8" selection-end-column="5" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/structure/ProgramNode.kt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="114">
-          <caret line="6" column="0" lean-forward="false" selection-start-line="6" selection-start-column="0" selection-end-line="6" selection-end-column="0" />
           <folding />
         </state>
       </provider>
@@ -957,23 +902,144 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/src/tests/ClassLoaderTest.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="513">
+          <caret line="27" column="0" lean-forward="true" selection-start-line="27" selection-start-column="0" selection-end-line="27" selection-end-column="0" />
+          <folding>
+            <element signature="imports" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/parser/ProductionRule.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="281">
+          <caret line="76" column="11" lean-forward="true" selection-start-line="76" selection-start-column="11" selection-end-line="76" selection-end-column="11" />
+          <folding>
+            <element signature="e#1480#1481#0" expanded="true" />
+            <element signature="e#1524#1525#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/parser/ParseState.kt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="343">
+          <caret line="59" column="17" lean-forward="true" selection-start-line="59" selection-start-column="17" selection-end-line="59" selection-end-column="17" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/util/ClassFinder.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="247">
-          <caret line="13" column="40" lean-forward="true" selection-start-line="13" selection-start-column="40" selection-end-line="13" selection-end-column="40" />
+        <state relative-caret-position="285">
+          <caret line="15" column="24" lean-forward="true" selection-start-line="15" selection-start-column="24" selection-end-line="15" selection-end-column="24" />
           <folding>
             <element signature="e#70#100#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/tests/ClassLoaderTest.java">
+    <entry file="file://$PROJECT_DIR$/src/parser/Parser.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="395">
-          <caret line="22" column="9" lean-forward="true" selection-start-line="22" selection-start-column="9" selection-end-line="22" selection-end-column="9" />
+        <state relative-caret-position="303">
+          <caret line="610" column="33" lean-forward="false" selection-start-line="610" selection-start-column="32" selection-end-line="610" selection-end-column="33" />
           <folding>
-            <element signature="imports" expanded="true" />
+            <element signature="docComment;class#Parser#0" expanded="false" />
+            <element signature="method#Parser#0;class#Parser#0" expanded="false" />
+            <element signature="docComment;method#GenerateParser#0;class#Parser#0" expanded="false" />
+            <element signature="e#2302#2333#0" expanded="false" />
+            <element signature="method#generateKeywords#0;class#Parser#0" expanded="false" />
+            <element signature="method#translateFunction#0;class#Parser#0" expanded="false" />
+            <element signature="docComment;method#translateToSimpleForm#0;class#Parser#0" expanded="false" />
+            <element signature="method#translateToSimpleForm#0;class#Parser#0" expanded="false" />
+            <element signature="method#mergeDuplicateGrammar#0;class#Parser#0" expanded="false" />
+            <element signature="method#getFirst#0;class#Parser#0" expanded="false" />
+            <element signature="docComment;method#generateTable#0;class#Parser#0" expanded="false" />
+            <element signature="n#!!doc;n#FirstSetParseTree#0;n#Parser#0" expanded="false" />
+            <element signature="class#FirstSetParseTree#0;class#Parser#0" expanded="false" />
+            <element signature="method#FirstSetParseTree#0;class#FirstSetParseTree#0;class#Parser#0" expanded="false" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/structure/ProgramNode.kt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="304">
+          <caret line="16" column="45" lean-forward="false" selection-start-line="16" selection-start-column="45" selection-end-line="16" selection-end-column="45" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/interpreter/ScopeGeneratorFunctionFactory.kt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="228">
+          <caret line="12" column="0" lean-forward="false" selection-start-line="12" selection-start-column="0" selection-end-line="12" selection-end-column="0" />
+          <folding>
+            <element signature="e#21#75#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/interpreter/InterpretFunctionFactory.kt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="210">
+          <caret line="24" column="0" lean-forward="false" selection-start-line="24" selection-start-column="0" selection-end-line="24" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/util/FunctionFinder.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1236">
+          <caret line="72" column="0" lean-forward="false" selection-start-line="72" selection-start-column="0" selection-end-line="72" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/lang_def/minilang_grammar">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="304">
+          <caret line="16" column="20" lean-forward="true" selection-start-line="16" selection-start-column="20" selection-end-line="16" selection-end-column="20" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/parser/ReduceFunctionFactory.kt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="494">
+          <caret line="74" column="0" lean-forward="true" selection-start-line="74" selection-start-column="0" selection-end-line="74" selection-end-column="0" />
+          <folding>
+            <element signature="e#16#106#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/interpreter/Interpreter.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="259">
+          <caret line="38" column="24" lean-forward="false" selection-start-line="38" selection-start-column="24" selection-end-line="38" selection-end-column="24" />
+          <folding>
+            <element signature="e#1110#1111#0" expanded="true" />
+            <element signature="e#1133#1134#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/testfiles/minilang_miniTest.ml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="133">
+          <caret line="7" column="10" lean-forward="true" selection-start-line="7" selection-start-column="10" selection-end-line="7" selection-end-column="10" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/structure/Keyword.kt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1329">
+          <caret line="112" column="0" lean-forward="true" selection-start-line="112" selection-start-column="0" selection-end-line="112" selection-end-column="0" />
+          <folding />
         </state>
       </provider>
     </entry>

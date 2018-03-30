@@ -1,7 +1,9 @@
 package interpreter;
 
 import structure.Keyword;
-import structure.ProgramScope;
+
+import java.util.ArrayDeque;
+import java.util.Queue;
 
 public class Interpreter
 {
@@ -11,10 +13,11 @@ public class Interpreter
 	}
 
 	//fields...가 필요할까?
-	private final Keyword root;
+	private Keyword root;
 	private Interpreter(Keyword root)
 	{
 		this.root = root;
+		rebuildTree();
 		generateKeywordScope();
 	}
 
@@ -29,6 +32,22 @@ public class Interpreter
 		this.root.generateScope();
 	}
 
+	private void rebuildTree()
+	{
+		//Keyword로만 이루어져 있던 tree를 더 세분화한다
+
+		root = root.rebuild();
+		root.setRoot(root);
+		Queue<Keyword> queue = new ArrayDeque<>(root.getChildren());
+		while(!queue.isEmpty())
+		{
+			Keyword next = queue.poll();
+			next.setRoot(root);
+			next = next.rebuild();
+			queue.addAll(next.getChildren());
+		}
+	}
+
 	//////////////////////////
 	//Interpreting functions//
 	//////////////////////////
@@ -36,6 +55,4 @@ public class Interpreter
 	{
 		root.interpret();
 	}
-
-
 }

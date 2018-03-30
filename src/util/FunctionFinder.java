@@ -2,9 +2,8 @@ package util;
 
 import interpreter.InterpretFunctionFactory;
 import interpreter.ScopeGeneratorFunctionFactory;
-import parser.ParseFunctionFactory;
+import parser.ReduceFunctionFactory;
 import structure.Keyword;
-import structure.ProgramScope;
 
 import java.lang.reflect.Method;
 import java.util.List;
@@ -16,13 +15,13 @@ public class FunctionFinder
 		Method method;
 		try
 		{
-			method = ParseFunctionFactory.class.getDeclaredMethod(name, Keyword.class, List.class);
+			method = ReduceFunctionFactory.class.getDeclaredMethod(name, Keyword.class, List.class);
 		}
 		catch (NoSuchMethodException e)
 		{
 			try
 			{
-				return ParseFunctionFactory.class.getDeclaredMethod("default", Keyword.class, List.class);
+				return ReduceFunctionFactory.class.getDeclaredMethod("default", Keyword.class, List.class);
 			}
 			catch (NoSuchMethodException e1)
 			{
