@@ -1,6 +1,7 @@
 package structure
 
 import interpreter.InterpretFunctionFactory
+import interpreter.ScopeGeneratorFunctionFactory
 import parser.ParseFunctionFactory
 import util.FunctionFinder
 import java.lang.reflect.Method
@@ -14,6 +15,7 @@ class Keyword
 		this.isTerminal = isTerminal
 		this.isVisible = isVisible
 		this.reduceFun = FunctionFinder.FindParseFunctionByName(keyword.toLowerCase())
+		this.scopeGenFun = FunctionFinder.FindScopeGenerationFunction(keyword.toLowerCase())
 		this.interpretFun = FunctionFinder.FindInterpretFunctionByName(keyword.toLowerCase())
 	}
 
@@ -32,13 +34,12 @@ class Keyword
 	var parent: Keyword? = null
 	val children = ArrayList<Keyword>()
 	private val interpretFun: Method
+	val scopeGenFun: Method
 	val reduceFun: Method
 	//local variable 준비
 	val boundVariables = ProgramScope()
-	//leaf부터 시작해서 올라오면서 이 flag가 true인 keyword node를 만난다면 이 keyword는 이 keyword에 bound된 로컬 variable인거임
-	var boundVariableStopHere = false
-
 	var original: String? = null
+	var root = this
 
 	companion object
 	{
@@ -47,6 +48,7 @@ class Keyword
 		@JvmField
 		val EPSILON = Keyword("epsilon", true)
 		val InterpreterFactoryObject = InterpretFunctionFactory()
+		val ScopeGenFunFactoryObject = ScopeGeneratorFunctionFactory()
 		val ParseFunctionFactoryObject = ParseFunctionFactory()
 	}
 
@@ -95,18 +97,14 @@ class Keyword
 		children.add(child)
 	}
 
-	fun reduce(context: List<Keyword>)
-	{
-		reduceFun.invoke(ParseFunctionFactoryObject, this, context)
-	}
+	fun reduce(context: List<Keyword>) = reduceFun.invoke(ParseFunctionFactoryObject, this, context)
 
-	fun interpret(): ProgramValue?
-	{
-		return interpretFun.invoke(InterpreterFactoryObject, this) as ProgramValue?
-	}
+	fun interpret() = interpretFun.invoke(InterpreterFactoryObject, this) as ProgramValue?
 
 	fun generateScope()
 	{
-
+		scopeGenFun.invoke(ScopeGenFunFactoryObject, this)
 	}
+
+
 }

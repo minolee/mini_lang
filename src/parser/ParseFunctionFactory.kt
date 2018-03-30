@@ -89,6 +89,8 @@ class ParseFunctionFactory
 		}
 	}
 
+	fun expr_list(k: Keyword, context: List<Keyword>) = findAndAddAll(context, "EXPR").forEach(k::addChild)
+
 	fun concurrent_expr(k: Keyword, context: List<Keyword>) = concurrent_expr_(k, context)
 
 	fun concurrent_expr_(k: Keyword, context: List<Keyword>)

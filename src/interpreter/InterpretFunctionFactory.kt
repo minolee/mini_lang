@@ -18,6 +18,8 @@ class InterpretFunctionFactory
 		for (node in k.children) node.interpret()
 	}
 
+	fun abort(k: Keyword): Nothing = throw ProgramException(ProgramException.ExceptionType.ABORT)
+
 	fun if_expr(k: Keyword): ProgramValue?
 	{
 		val trueList = ArrayList<Keyword>()
@@ -38,9 +40,9 @@ class InterpretFunctionFactory
 				if_expr(k)
 			}
 		}
-		catch (e: ProgramException)
+		catch (e: ProgramException) //catch ABORT
 		{
-
+			//true가 없다 -> skip
 		}
 		return null
 	}
@@ -63,7 +65,7 @@ class InterpretFunctionFactory
 	fun base_case(k: Keyword): ProgramValue = when (k.children[0].keyword)
 	{
 		"EXPR" -> expr(k)
-		"ID" -> findId(k.children[0])!!
+		"ID" -> findId(k.children[0]) ?: throw ProgramException(ProgramException.ExceptionType.FREE_VARIABLE)
 		"NUMBER" -> if (k.children[0].keywordType == "Int") ProgramValue(k.children[0].intValue!!) else ProgramValue(k.children[0].floatValue!!)
 		else -> throw Exception("base_case: ${k.children[0].keyword}")
 	}
@@ -113,21 +115,23 @@ class InterpretFunctionFactory
 	fun findId(k: Keyword): ProgramValue?
 	{
 		var current = k.boundVariables
-		while (current.parent != current)
+		do
 		{
-			if (current.scope[k.strValue!!] != null) return current.scope[k.strValue!!]
 			current = current.parent
+			if (current.scope[k.strValue!!] != null) return current.scope[k.strValue!!]
 		}
+		while (current.parent != current)
 		return null
 	}
 
 	fun modifyVariable(k: Keyword, v: ProgramValue)
 	{
 		var current = k.boundVariables
-		while (current.parent != current)
+		do
 		{
-			if (current.scope[k.strValue!!] != null) current.scope[k.strValue!!] = v
 			current = current.parent
+			if (current.scope[k.strValue!!] != null) current.scope[k.strValue!!] = v
 		}
+		while (current.parent != current)
 	}
 }
