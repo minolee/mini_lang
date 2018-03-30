@@ -6,7 +6,7 @@ import parser.ParseFunctionFactory
 import util.FunctionFinder
 import java.lang.reflect.Method
 
-class Keyword
+open class Keyword
 {
 
 	constructor(keyword: String, isTerminal: Boolean, isVisible: Boolean)
