@@ -28,10 +28,8 @@ open class Keyword
 	var floatValue: Float? = null
 	var keywordType: String = "None"
 	var assigned: Boolean = false
-	var parent: Keyword? = null
+	var parent: Keyword = this
 	val children = ArrayList<Keyword>()
-	//local variable 준비
-	val boundVariables = ProgramScope()
 	var original: String? = null
 	var root = this
 
@@ -87,7 +85,6 @@ open class Keyword
 	fun addChild(child: Keyword)
 	{
 		child.parent = this
-		child.boundVariables.parent = this.boundVariables
 		children.add(child)
 	}
 
@@ -106,9 +103,19 @@ open class Keyword
 		val x = ClassFinder.FindProgramStructureByName(keyword) ?: return this
 		val instance = x.getDeclaredConstructor(Keyword::class.java).newInstance(this)
 		instance.parent = this.parent
-		instance.boundVariables.parent = this.parent?.boundVariables?: instance.boundVariables
-		children.forEach(instance::addChild)
 		return instance
+	}
+
+	fun addBoundVariable(x: String)
+	{
+
+		if(this !is ProgramNode.ScopeContainingKeyword)
+		{
+			this.parent.addBoundVariable(x)
+			return
+		}
+		this.scope[x] = ProgramValue.DummyValue()
+
 	}
 
 }

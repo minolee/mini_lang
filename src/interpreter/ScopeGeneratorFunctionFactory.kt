@@ -1,7 +1,7 @@
 package interpreter
 
 import structure.Keyword
-import structure.ProgramValue
+import structure.ProgramNode
 
 class ScopeGeneratorFunctionFactory
 {
@@ -13,11 +13,11 @@ class ScopeGeneratorFunctionFactory
 	fun id_declaration(k: Keyword)
 	{
 		//TODO not working
-		k.children.forEach { k.parent!!.boundVariables.scope[it.strValue!!] = ProgramValue.DummyValue() }
+		k.children.forEach { k.addBoundVariable(it.strValue!!) }
 	}
 
 	fun function_declaration(k: Keyword)
 	{
-		//k.root.boundVariables.scope[k.strValue!!] = ProgramValue() //TODO where to store function structure
+		(k.root as ProgramNode.program).functions[k.strValue!!] = k as ProgramNode.function_declaration
 	}
 }

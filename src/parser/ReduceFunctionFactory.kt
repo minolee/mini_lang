@@ -14,9 +14,10 @@ class ReduceFunctionFactory
 
 	fun program(k: Keyword, context: List<Keyword>)
 	{
-		if(context[0].keyword == "ID_DECLARATION") k.addChild(context[0])
+		if (context[0].keyword == "ID_DECLARATION") k.addChild(context[0])
 		findAndAddAll(context, "LEGAL_SENTENCE").map { it.children[0] }.forEach(k::addChild)
 	}
+
 	fun sentences(k: Keyword, context: List<Keyword>) = findAndAddAll(context, "LEGAL_SENTENCE").forEach(k::addChild)
 	fun legal_sentence(k: Keyword, context: List<Keyword>) = when (context[0].keyword)
 	{
@@ -29,12 +30,13 @@ class ReduceFunctionFactory
 	fun compound_exprs(k: Keyword, context: List<Keyword>) = findAndAddAll(context, "COMPOUND_EXPR").forEach(k::addChild)
 	fun compound_expr(k: Keyword, context: List<Keyword>)
 	{
-		for(node in context)
+		for (node in context)
 		{
-			if(node.isTerminal) continue
+			if (node.isTerminal) continue
 			else k.addChild(node)
 		}
 	}
+
 	fun function_declaration(k: Keyword, context: List<Keyword>)
 	{
 		for (node in context)
@@ -45,7 +47,7 @@ class ReduceFunctionFactory
 			}
 			if (node.keyword == "ID_LIST")
 			{
-				node.children.forEach { k.boundVariables.scope[it.strValue!!] = ProgramValue.DummyValue() }
+				k.addChild(node)
 			}
 			if (node.keyword == "COMPOUND_EXPR")
 			{
@@ -83,9 +85,15 @@ class ReduceFunctionFactory
 		{
 			when (node.keyword)
 			{
-				"EXPR", "ID", "NUMBER" -> k.addChild(node)
+				"EXPR", "ID", "NUMBER", "INVOKE_EXPR" -> k.addChild(node)
 			}
 		}
+	}
+
+	fun invoke_expr(k: Keyword, context: List<Keyword>)
+	{
+		k.strValue = k.children[0].strValue
+		findAndAddAll(context, "EXPR").forEach(k::addChild)
 	}
 
 	fun expr_list(k: Keyword, context: List<Keyword>) = findAndAddAll(context, "EXPR").forEach(k::addChild)

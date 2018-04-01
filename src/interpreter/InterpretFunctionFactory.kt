@@ -2,9 +2,10 @@ package interpreter
 
 import exception.ProgramException
 import structure.Keyword
-import structure.ProgramScope
+import structure.ProgramNode
 import structure.ProgramValue
 import java.util.*
+import kotlin.collections.HashMap
 
 class InterpretFunctionFactory
 {
@@ -39,12 +40,21 @@ class InterpretFunctionFactory
 			{
 				if_expr(k)
 			}
-		}
-		catch (e: ProgramException) //catch ABORT
+		} catch (e: ProgramException) //catch ABORT
 		{
 			//true가 없다 -> skip
 		}
 		return null
+	}
+
+	fun concurrent_expr(k: Keyword)
+	{
+		val values = k.children.filter { it.keyword == "EXPR" }.map(Keyword::interpret)
+		val ids = k.children.filter { it.keyword == "ID" }
+		for (i in  0 until values.size)
+		{
+			modifyVariable(ids[i], values[i])
+		}
 	}
 
 	fun print_expr(k: Keyword)
@@ -76,6 +86,17 @@ class InterpretFunctionFactory
 		modifyVariable(k.children[0], k.children[1].interpret()!!)
 	}
 
+	fun invoke_expr(k: Keyword): ProgramValue?
+	{
+		val function = (k.root as ProgramNode.program).functions[k.strValue!!]
+				?: throw ProgramException(ProgramException.ExceptionType.FREE_VARIABLE)
+
+		val args = arrayOf(k.children)
+
+		return function.copy().interpret()
+	}
+
+	//sub functions
 	//[EXPR][EXPRX_] 형태의 EXPR
 	fun pass(k: Keyword): ProgramValue
 	{
@@ -112,26 +133,21 @@ class InterpretFunctionFactory
 		return x
 	}
 
-	fun findId(k: Keyword): ProgramValue?
+	fun findId(target: Keyword, source: Keyword = target): ProgramValue?
 	{
-		var current = k.boundVariables
-		do
-		{
-			current = current.parent
-			if (current.scope[k.strValue!!] != null) return current.scope[k.strValue!!]
-		}
-		while (current.parent != current)
-		return null
+		if (source !is ProgramNode.ScopeContainingKeyword) return findId(target, source.parent)
+		if (target.strValue!! !in source) return findId(target, source.parent)
+		return source[target.strValue!!]
 	}
 
-	fun modifyVariable(k: Keyword, v: ProgramValue)
+	fun modifyVariable(k: Keyword, v: ProgramValue?)
 	{
-		var current = k.boundVariables
+		var current = k
 		do
 		{
 			current = current.parent
+			if (current !is ProgramNode.ScopeContainingKeyword) continue
 			if (current.scope[k.strValue!!] != null) current.scope[k.strValue!!] = v
-		}
-		while (current.parent != current)
+		} while (current.parent != current)
 	}
 }
