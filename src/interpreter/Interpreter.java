@@ -37,14 +37,12 @@ public class Interpreter
 		//Keyword로만 이루어져 있던 tree를 더 세분화한다
 
 		root = root.rebuild();
-		root.setRoot(root);
-		Queue<Keyword> queue = new ArrayDeque<>(root.getChildren());
-		while(!queue.isEmpty())
+		Queue<Keyword> q = new ArrayDeque<>(root.getChildren());
+		while(!q.isEmpty())
 		{
-			Keyword next = queue.poll();
-			next.setRoot(root);
-			next = next.rebuild();
-			queue.addAll(next.getChildren());
+			Keyword k = q.poll();
+			k.setRoot(root);
+			q.addAll(k.getChildren());
 		}
 	}
 

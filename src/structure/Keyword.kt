@@ -5,6 +5,7 @@ import interpreter.ScopeGeneratorFunctionFactory
 import parser.ReduceFunctionFactory
 import util.ClassFinder
 import util.FunctionFinder
+import java.lang.reflect.InvocationTargetException
 
 open class Keyword
 {
@@ -90,7 +91,18 @@ open class Keyword
 
 	fun reduce(context: List<Keyword>) = FunctionFinder.FindParseFunctionByName(keyword.toLowerCase()).invoke(ParseFunctionFactoryObject, this, context)
 
-	fun interpret() = FunctionFinder.FindInterpretFunctionByName(keyword.toLowerCase()).invoke(InterpreterFactoryObject, this) as ProgramValue?
+	fun interpret(): ProgramValue?
+	{
+		try
+		{
+			return FunctionFinder.FindInterpretFunctionByName(keyword.toLowerCase()).invoke(InterpreterFactoryObject, this) as ProgramValue?
+		}
+		catch(e: InvocationTargetException)
+		{
+			throw e.targetException
+		}
+
+	}
 
 	fun generateScope()
 	{
@@ -100,16 +112,19 @@ open class Keyword
 
 	fun rebuild(): Keyword
 	{
-		val x = ClassFinder.FindProgramStructureByName(keyword) ?: return this
-		val instance = x.getDeclaredConstructor(Keyword::class.java).newInstance(this)
+		val instance = ClassFinder.FindProgramStructureByName(keyword)?.getDeclaredConstructor(Keyword::class.java)?.newInstance(this)
+				?: this
 		instance.parent = this.parent
+		val mapped = instance.children.map(Keyword::rebuild)
+		instance.children.clear()
+		mapped.forEach { instance.addChild(it) }
 		return instance
 	}
 
 	fun addBoundVariable(x: String)
 	{
 
-		if(this !is ProgramNode.ScopeContainingKeyword)
+		if (this !is ProgramNode.ScopeContainingKeyword)
 		{
 			this.parent.addBoundVariable(x)
 			return

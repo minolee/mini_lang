@@ -22,7 +22,7 @@ class ParseState(initial: Closure)
 			}
 			val candidates = ArrayList<Item>()
 			current.currentState.items.forEach { if (it.next == null && it.lookahead == next) candidates.add(it) }
-			if (candidates.size == 0) throw ParseException(ParseException.ExceptionType.SYNTAX_ERROR)
+			if (candidates.size == 0) throw ParseException(ParseException.ExceptionType.SYNTAX_ERROR, next.keyword)
 			context.pop()
 			//top of keyword stack
 			//여기부터 pop 하면서 keyword filtering 한다

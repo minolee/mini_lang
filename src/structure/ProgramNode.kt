@@ -34,6 +34,7 @@ class ProgramNode
 
 		init
 		{
+			strValue = k.strValue
 			for (node in k.children)
 			{
 				if (node.keyword == "ID_LIST")
@@ -49,14 +50,25 @@ class ProgramNode
 			return function_declaration(this)
 		}
 
-		fun interpret(vararg inputParams: ProgramValue?): ProgramValue?
+		fun interpret(inputParams: List<ProgramValue?>): ProgramValue?
 		{
 			if(inputParams.size != paramNames.size) throw ProgramException(ProgramException.ExceptionType.PARAM_NOT_MATCH)
-			for(i in 0..inputParams.size)
+			for(i in 0 until inputParams.size)
 			{
 				params[paramNames[i]] = inputParams[i]
 			}
-			return interpret()
+			try
+			{
+				interpret()
+			}
+			catch(e: ProgramException)
+			{
+				if(e.type == ProgramException.ExceptionType.RETURN)
+				{
+					return e.returnValue
+				}
+			}
+			return null
 		}
 
 		override fun get(key: String): ProgramValue?

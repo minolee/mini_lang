@@ -92,7 +92,7 @@ class ReduceFunctionFactory
 
 	fun invoke_expr(k: Keyword, context: List<Keyword>)
 	{
-		k.strValue = k.children[0].strValue
+		k.strValue = context[0].strValue
 		findAndAddAll(context, "EXPR").forEach(k::addChild)
 	}
 

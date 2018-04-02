@@ -19,6 +19,15 @@ class InterpretFunctionFactory
 		for (node in k.children) node.interpret()
 	}
 
+	fun program(k: Keyword)
+	{
+		for (node in k.children)
+		{
+			if(node is ProgramNode.function_declaration) continue
+			node.interpret()
+		}
+	}
+
 	fun abort(k: Keyword): Nothing = throw ProgramException(ProgramException.ExceptionType.ABORT)
 
 	fun if_expr(k: Keyword): ProgramValue?
@@ -72,11 +81,12 @@ class InterpretFunctionFactory
 		return if (k.children.size > 1) -value!! else value!!
 	}
 
-	fun base_case(k: Keyword): ProgramValue = when (k.children[0].keyword)
+	fun base_case(k: Keyword): ProgramValue? = when (k.children[0].keyword)
 	{
 		"EXPR" -> expr(k)
 		"ID" -> findId(k.children[0]) ?: throw ProgramException(ProgramException.ExceptionType.FREE_VARIABLE)
 		"NUMBER" -> if (k.children[0].keywordType == "Int") ProgramValue(k.children[0].intValue!!) else ProgramValue(k.children[0].floatValue!!)
+		"INVOKE_EXPR" -> k.children[0].interpret()
 		else -> throw Exception("base_case: ${k.children[0].keyword}")
 	}
 
@@ -90,10 +100,16 @@ class InterpretFunctionFactory
 	{
 		val function = (k.root as ProgramNode.program).functions[k.strValue!!]
 				?: throw ProgramException(ProgramException.ExceptionType.FREE_VARIABLE)
+		return function.copy().interpret(k.children.map { it.interpret() }.toList())
+	}
 
-		val args = arrayOf(k.children)
-
-		return function.copy().interpret()
+	fun return_expr(k: Keyword): Nothing
+	{
+		//how to force exit interpreting?
+		val ex = ProgramException(ProgramException.ExceptionType.RETURN)
+		val result = k.children[1].interpret()
+		ex.returnValue = result
+		throw ex
 	}
 
 	//sub functions
