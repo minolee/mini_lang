@@ -19,6 +19,11 @@ class ProgramNode
 			return scope[key]
 		}
 
+		open operator fun set(key: String, v: ProgramValue?)
+		{
+			scope[key] = v
+		}
+
 		open operator fun contains(key: String) = scope.contains(key)
 	}
 
@@ -52,8 +57,8 @@ class ProgramNode
 
 		fun interpret(inputParams: List<ProgramValue?>): ProgramValue?
 		{
-			if(inputParams.size != paramNames.size) throw ProgramException(ProgramException.ExceptionType.PARAM_NOT_MATCH)
-			for(i in 0 until inputParams.size)
+			if (inputParams.size != paramNames.size) throw ProgramException(ProgramException.ExceptionType.PARAM_NOT_MATCH)
+			for (i in 0 until inputParams.size)
 			{
 				params[paramNames[i]] = inputParams[i]
 			}
@@ -61,9 +66,9 @@ class ProgramNode
 			{
 				interpret()
 			}
-			catch(e: ProgramException)
+			catch (e: ProgramException)
 			{
-				if(e.type == ProgramException.ExceptionType.RETURN)
+				if (e.type == ProgramException.ExceptionType.RETURN)
 				{
 					return e.returnValue
 				}
@@ -73,8 +78,14 @@ class ProgramNode
 
 		override fun get(key: String): ProgramValue?
 		{
-			if(scope[key] != null) return scope[key]
+			if (scope[key] != null) return scope[key]
 			return params[key]
+		}
+
+		override fun set(key: String, v: ProgramValue?)
+		{
+			if (scope.containsKey(key)) scope[key] = v
+			else params[key] = v
 		}
 
 		override fun contains(key: String): Boolean
