@@ -13,12 +13,15 @@ fun max(a, b, c)
 fun fibonacci(x)
 {
     if
-        x <= 1 -> return x
-    |   x > 1 -> return fibonacci(x - 1) + fibonacci (x - 2)
+        x <= 1 -> return 1
+    |   x > 1 -> return fibonacci(x - 1) + fibonacci(x - 2)
     fi
 }
 print(max(3,2,5))
-print(fibonacci(10))
+x := 10
+do
+    x > 0 -> {print(x) x := x - 1}
+od
 x := 3
 y := 5
 z := -2

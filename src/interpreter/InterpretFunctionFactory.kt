@@ -112,7 +112,8 @@ class InterpretFunctionFactory
 	{
 		val function = (k.root as ProgramNode.program).functions[k.strValue!!]
 				?: throw ProgramException(ProgramException.ExceptionType.FREE_VARIABLE)
-		return function.copy().interpret(k.children.map { it.interpret() }.toList())
+		val args = k.children.map { it.interpret() }.toList()
+		return function.copy().interpret(args)
 	}
 
 	fun return_expr(k: Keyword): Nothing
