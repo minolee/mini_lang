@@ -102,27 +102,23 @@ class InterpretFunctionFactory
 		else -> throw Exception("base_case: ${k.children[0].keyword}")
 	}
 
-	fun assign_expr(k: Keyword)
-	{
-		//함수가 없으니까 일단 이렇게 해도 됨
-		modifyVariable(k.children[0], k.children[1].interpret()!!)
-	}
+	fun assign_expr(k: Keyword) = modifyVariable(k.children[0], k.children[1].interpret()!!)
+
 
 	fun invoke_expr(k: Keyword): ProgramValue?
 	{
 		val function = (k.root as ProgramNode.program).functions[k.strValue!!]
-				?: throw ProgramException(ProgramException.ExceptionType.FREE_VARIABLE)
+				?: throw ProgramException(ProgramException.ExceptionType.NO_FUNCTION)
 		val args = k.children.map { it.interpret() }.toList()
 		return function.copy().interpret(args)
 	}
 
 	fun return_expr(k: Keyword): Nothing
 	{
-		//how to force exit interpreting?
 		val ex = ProgramException(ProgramException.ExceptionType.RETURN)
 		val result = k.children[1].interpret()
 		ex.returnValue = result
-		throw ex
+		throw ex //거의 longjmp
 	}
 
 	//sub functions
@@ -139,6 +135,7 @@ class InterpretFunctionFactory
 	{
 		val op = k.children[0].keyword
 		val right = k.children[1].interpret()!!
+		if(!left.declared || !right.declared) throw Exception("Undeclared")
 		//3번째 element도 고려해야 해!
 		val x: ProgramValue = when (op)
 		{
@@ -165,7 +162,11 @@ class InterpretFunctionFactory
 	fun findId(target: Keyword, source: Keyword = target): ProgramValue?
 	{
 		if (source !is ProgramNode.ScopeContainingKeyword) return findId(target, source.parent)
-		if (target.strValue!! !in source) return findId(target, source.parent)
+		if (target.strValue!! !in source)
+		{
+			if (source.parent == source) return null
+			return findId(target, source.parent)
+		}
 		return source[target.strValue!!]
 	}
 

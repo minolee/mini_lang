@@ -12,12 +12,12 @@ class ScopeGeneratorFunctionFactory
 
 	fun id_declaration(k: Keyword)
 	{
-		//TODO not working
 		k.children.forEach { k.addBoundVariable(it.strValue!!) }
 	}
 
 	fun function_declaration(k: Keyword)
 	{
 		(k.root as ProgramNode.program).functions[k.strValue!!] = k as ProgramNode.function_declaration
+		default(k)
 	}
 }

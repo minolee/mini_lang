@@ -82,7 +82,7 @@ class ProgramValue private constructor(x: Number, dec: Boolean)
 	{
 		val x = this.value.toFloat()
 		val y = other.value.toFloat()
-		return if (x > y) 1 else 0
+		return if (x > y) 1 else if(x == y) 0 else -1
 	}
 
 	override fun hashCode(): Int

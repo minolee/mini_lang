@@ -23,7 +23,7 @@ public class ProgramException extends Exception
 	}
 	public enum ExceptionType
 	{
-		ZERO_DIVISION("Divide by zero"), ABORT("Aborted"), FREE_VARIABLE("Free variable"), PARAM_NOT_MATCH("Parameter not match"), RETURN("Return statement outside function");
+		ZERO_DIVISION("Divide by zero"), ABORT("Aborted"), FREE_VARIABLE("Free variable"), PARAM_NOT_MATCH("Parameter not match"), RETURN("Return statement outside function"), NO_FUNCTION("No such function");
 		@Getter
 		final String msg;
 		ExceptionType(String s)
