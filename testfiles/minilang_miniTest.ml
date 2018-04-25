@@ -34,7 +34,7 @@ fun fibonacci(x)
     fi
 }
 //print(B(10))
-print(sum(1, 10))
+//print(sum(1, 10))
 //print(max(3,2,5))
 x := 10
 print(fibonacci(x))

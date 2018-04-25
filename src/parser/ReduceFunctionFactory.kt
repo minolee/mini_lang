@@ -25,7 +25,11 @@ class ReduceFunctionFactory
 		else -> k.addChild(context[0])
 	}
 
-	fun id_declaration(k: Keyword, context: List<Keyword>) = id_list(k, context)
+	fun id_declaration(k: Keyword, context: List<Keyword>)
+	{
+		k.surface = "DECLARATION"
+		return id_list(k, context)
+	}
 	fun id_list(k: Keyword, context: List<Keyword>) = findAndAddAll(context, "ID").forEach(k::addChild)
 	fun compound_exprs(k: Keyword, context: List<Keyword>) = findAndAddAll(context, "COMPOUND_EXPR").forEach(k::addChild)
 	fun compound_expr(k: Keyword, context: List<Keyword>)
@@ -56,8 +60,17 @@ class ReduceFunctionFactory
 		}
 	}
 
-	fun if_expr(k: Keyword, context: List<Keyword>) = case_list(k, context)
-	fun do_expr(k: Keyword, context: List<Keyword>) = case_list(k, context)
+	fun if_expr(k: Keyword, context: List<Keyword>)
+	{
+		k.surface = "IF"
+		return case_list(k, context)
+	}
+
+	fun do_expr(k: Keyword, context: List<Keyword>)
+	{
+		k.surface = "DO"
+		return case_list(k, context)
+	}
 
 	fun case_list(k: Keyword, context: List<Keyword>)
 	{
@@ -77,7 +90,11 @@ class ReduceFunctionFactory
 
 	}
 
-	fun print_expr(k: Keyword, context: List<Keyword>) = findAndAddAll(context, "EXPR").forEach(k::addChild)
+	fun print_expr(k: Keyword, context: List<Keyword>)
+	{
+		k.surface = "PRINT"
+		return findAndAddAll(context, "EXPR").forEach(k::addChild)
+	}
 
 	fun base_case(k: Keyword, context: List<Keyword>)
 	{
@@ -93,6 +110,7 @@ class ReduceFunctionFactory
 	fun invoke_expr(k: Keyword, context: List<Keyword>)
 	{
 		k.strValue = context[0].strValue
+		k.surface = k.strValue!!
 		findAndAddAll(context, "EXPR").forEach(k::addChild)
 	}
 
@@ -116,6 +134,7 @@ class ReduceFunctionFactory
 
 	fun assign_expr(k: Keyword, context: List<Keyword>)
 	{
+		k.surface = "="
 		for (node in context)
 		{
 			when (node.keyword)
@@ -125,7 +144,29 @@ class ReduceFunctionFactory
 		}
 	}
 
+	fun expr(k: Keyword, context: List<Keyword>)
+	{
 
+		for(keyword in context)
+		{
+			if (keyword.keywordType == "None" && keyword.isTerminal) k.surface = keyword.surface
+			else k.addChild(keyword)
+		}
+	}
+
+	fun return_expr(k: Keyword, context: List<Keyword>)
+	{
+		k.surface = "RETURN"
+		for (key in context)
+		{
+			if (!key.isTerminal) k.addChild(key)
+		}
+	}
+
+	fun expr1(k: Keyword, context: List<Keyword>) = expr(k, context)
+	fun expr2(k: Keyword, context: List<Keyword>) = expr(k, context)
+	fun expr3(k: Keyword, context: List<Keyword>) = expr(k, context)
+	fun expr4(k: Keyword, context: List<Keyword>) = expr(k, context)
 	private fun findAndAddAll(context: List<Keyword>, toAdd: String, iterative: Boolean = false): List<Keyword>
 	{
 		val result = ArrayList<Keyword>()

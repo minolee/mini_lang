@@ -18,6 +18,29 @@ open class Keyword
 	}
 
 	constructor(keyword: String, isTerminal: Boolean) : this(keyword, isTerminal, true)
+	constructor(keyword: String, isTerminal: Boolean, surface: String) : this(keyword, isTerminal, true)
+	{
+		this.surface = surface
+	}
+
+	constructor(keyword: String, isTerminal: Boolean, value: String, surface: String) : this(keyword, isTerminal, surface)
+	{
+		strValue = value
+		keywordType = "String"
+	}
+
+	constructor(keyword: String, isTerminal: Boolean, value: Int, surface: String) : this(keyword, isTerminal, surface)
+	{
+		intValue = value
+		keywordType = "Int"
+	}
+
+	constructor(keyword: String, isTerminal: Boolean, value: Float, surface: String) : this(keyword, isTerminal, surface)
+	{
+		floatValue = value
+		keywordType = "Float"
+	}
+
 	constructor(copy: Keyword) : this(copy.keyword, copy.isTerminal, copy.isVisible)
 
 
@@ -27,6 +50,7 @@ open class Keyword
 	var strValue: String? = null
 	var intValue: Int? = null
 	var floatValue: Float? = null
+	var surface: String = ""
 	var keywordType: String = "None"
 	var assigned: Boolean = false
 	var parent: Keyword = this
@@ -45,23 +69,6 @@ open class Keyword
 		val ParseFunctionFactoryObject = ReduceFunctionFactory()
 	}
 
-	constructor(keyword: String, isTerminal: Boolean, value: String) : this(keyword, isTerminal)
-	{
-		strValue = value
-		keywordType = "String"
-	}
-
-	constructor(keyword: String, isTerminal: Boolean, value: Int) : this(keyword, isTerminal)
-	{
-		intValue = value
-		keywordType = "Int"
-	}
-
-	constructor(keyword: String, isTerminal: Boolean, value: Float) : this(keyword, isTerminal)
-	{
-		floatValue = value
-		keywordType = "Float"
-	}
 
 	override fun toString(): String
 	{
@@ -97,7 +104,7 @@ open class Keyword
 		{
 			return FunctionFinder.FindInterpretFunctionByName(keyword.toLowerCase()).invoke(InterpreterFactoryObject, this) as ProgramValue?
 		}
-		catch(e: InvocationTargetException)
+		catch (e: InvocationTargetException)
 		{
 			throw e.targetException
 		}
@@ -131,6 +138,32 @@ open class Keyword
 		}
 		this.scope[x] = ProgramValue.DummyValue()
 
+	}
+
+	fun printAST(tabs: Int = 0)
+	{
+		if (this is ProgramNode.function_declaration) return
+		val prefix = StringBuilder()
+		for (i in 0..tabs) prefix.append("\t")
+		if (surface == "")
+		{
+			children.forEach {
+				it.printAST(tabs)
+			}
+			return
+		}
+
+		print(prefix.toString())
+		if (children.size > 0) print("(")
+		println(surface)
+		var iterCount = 0
+		for (child in children)
+		{
+			child.printAST(tabs + 1)
+			if (iterCount < children.size - 1) println("$prefix\t,")
+			iterCount++
+		}
+		if (children.size > 0) println(prefix.toString() + ")")
 	}
 
 }

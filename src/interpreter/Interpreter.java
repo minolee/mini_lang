@@ -1,5 +1,6 @@
 package interpreter;
 
+import lombok.Getter;
 import structure.Keyword;
 
 import java.util.ArrayDeque;
@@ -13,6 +14,7 @@ public class Interpreter
 	}
 
 	//fields...가 필요할까?
+	@Getter
 	private Keyword root;
 	private Interpreter(Keyword root)
 	{

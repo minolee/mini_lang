@@ -150,23 +150,24 @@ public class Scanner
 				candidates.removeIf(a -> !a.acceptsCurrent());
 				if (candidates.size() == 0) throw new ScannerException(ScannerException.ExceptionType.SYNTAX_ERROR);
 				Automaton<Character> data = candidates.get(0);
+				String s = buf.toString();
 				switch (data.getName())
 				{
 					case "ID":
 					case "STRING_DATA":
-						result.add(new Keyword(data.getName(), true, buf.toString()));
+						result.add(new Keyword(data.getName(), true, s, s));
 						break;
 					case "NUMBER":
 						if (buf.toString().contains("."))
 						{
-							result.add(new Keyword(data.getName(), true, Float.parseFloat(buf.toString())));
+							result.add(new Keyword(data.getName(), true, Float.parseFloat(s), s));
 						}
 						else
-							result.add(new Keyword(data.getName(), true, Integer.parseInt(buf.toString())));
+							result.add(new Keyword(data.getName(), true, Integer.parseInt(s), s));
 					case "SKIP":
 						break;
 					default:
-						result.add(new Keyword(candidates.get(0).getName(), true));
+						result.add(new Keyword(candidates.get(0).getName(), true, s));
 				}
 				candidates = new ArrayList<>(keywords); //다음 loop에서 이번 char를 쓴 것으로 filter될테니 없어져도 됨
 				candidates.forEach(Automaton::initialize);
@@ -177,23 +178,24 @@ public class Scanner
 		final char last = lastchar;
 		candidates.removeIf(a -> !a.acceptsNext(last, true));
 		Automaton<Character> data = candidates.get(0);
+		String s = buf.toString();
 		switch (data.getName())
 		{
 			case "ID":
 			case "STRING_DATA":
-				result.add(new Keyword(data.getName(), true, buf.toString()));
+				result.add(new Keyword(data.getName(), true, s, s));
 				break;
 			case "NUMBER":
 				if (buf.toString().contains("."))
 				{
-					result.add(new Keyword(data.getName(), true, Float.parseFloat(buf.toString())));
+					result.add(new Keyword(data.getName(), true, Float.parseFloat(s), s));
 				}
 				else
-					result.add(new Keyword(data.getName(), true, Integer.parseInt(buf.toString())));
+					result.add(new Keyword(data.getName(), true, Integer.parseInt(s), s));
 			case "SKIP":
 				break;
 			default:
-				result.add(new Keyword(candidates.get(0).getName(), true));
+				result.add(new Keyword(candidates.get(0).getName(), true, s));
 		}
 		return result;
 	}

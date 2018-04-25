@@ -23,7 +23,7 @@ class Main
 //        {
 //            System.out.println(word.toString());
 //        }
-        Parser p = Parser.GenerateParser(new File(language_definition_dir+minilang_prefix+"grammar"));
+        Parser p = Parser.GenerateParser(new File(language_definition_dir+minilang_prefix+"grammar_test"));
 
 //        p.grammar.forEach((k, v) ->
 //		{
@@ -32,9 +32,12 @@ class Main
 //				System.out.println(pe);
 //			}
 //		});
-        Keyword root = p.parse(new File(test_file_dir+minilang_prefix+"miniTest.ml"), s);
+        Keyword root = p.parse(new File(test_file_dir+minilang_prefix+"printTest.ml"), s);
+
 //        System.out.println(FunctionFinder.FindParseFunctionByName("case"));
         Interpreter i = Interpreter.GenerateInterpreter(root);
-        i.interpret();
+
+		i.getRoot().printAST(0);
+//        i.interpret();
     }
 }
