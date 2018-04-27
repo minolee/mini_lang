@@ -1,3 +1,5 @@
 *.class
 output
 lib/
+*.jar
+out/

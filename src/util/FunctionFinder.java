@@ -2,6 +2,8 @@ package util;
 
 import interpreter.InterpretFunctionFactory;
 import interpreter.ScopeGeneratorFunctionFactory;
+import kotlin.reflect.jvm.internal.impl.builtins.KotlinBuiltIns;
+import parser.PrintFunctionFactory;
 import parser.ReduceFunctionFactory;
 import structure.Keyword;
 
@@ -40,14 +42,14 @@ public class FunctionFinder
 		}
 		catch (NoSuchMethodException e)
 		{
-            try
-            {
-                return InterpretFunctionFactory.class.getDeclaredMethod("default", Keyword.class);
-            }
-            catch (NoSuchMethodException e1)
-            {
-                return null;
-            }
+			try
+			{
+				return InterpretFunctionFactory.class.getDeclaredMethod("default", Keyword.class);
+			}
+			catch (NoSuchMethodException e1)
+			{
+				return null;
+			}
 		}
 		return method;
 	}
@@ -64,6 +66,27 @@ public class FunctionFinder
 			try
 			{
 				return ScopeGeneratorFunctionFactory.class.getDeclaredMethod("default", Keyword.class);
+			}
+			catch (NoSuchMethodException e1)
+			{
+				return null;
+			}
+		}
+		return method;
+	}
+
+	public static Method FindASTPrintFunction(String name)
+	{
+		Method method;
+		try
+		{
+			method = PrintFunctionFactory.class.getDeclaredMethod(name, Keyword.class, int.class);
+		}
+		catch (NoSuchMethodException e)
+		{
+			try
+			{
+				return PrintFunctionFactory.class.getDeclaredMethod("default", Keyword.class, int.class);
 			}
 			catch (NoSuchMethodException e1)
 			{

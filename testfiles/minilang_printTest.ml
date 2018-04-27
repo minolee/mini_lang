@@ -11,3 +11,6 @@ if
 |   a<1 -> abort
 fi
 
+//concurrent statement test
+a,b := b,a
+

@@ -2,6 +2,7 @@ package structure
 
 import interpreter.InterpretFunctionFactory
 import interpreter.ScopeGeneratorFunctionFactory
+import parser.PrintFunctionFactory
 import parser.ReduceFunctionFactory
 import util.ClassFinder
 import util.FunctionFinder
@@ -67,6 +68,7 @@ open class Keyword
 		val InterpreterFactoryObject = InterpretFunctionFactory()
 		val ScopeGenFunFactoryObject = ScopeGeneratorFunctionFactory()
 		val ParseFunctionFactoryObject = ReduceFunctionFactory()
+		val PrintASTFunctionFactoryObject = PrintFunctionFactory()
 	}
 
 
@@ -142,28 +144,7 @@ open class Keyword
 
 	fun printAST(tabs: Int = 0)
 	{
-		if (this is ProgramNode.function_declaration) return
-		val prefix = StringBuilder()
-		for (i in 0..tabs) prefix.append("\t")
-		if (surface == "")
-		{
-			children.forEach {
-				it.printAST(tabs)
-			}
-			return
-		}
-
-		print(prefix.toString())
-		if (children.size > 0) print("(")
-		println(surface)
-		var iterCount = 0
-		for (child in children)
-		{
-			child.printAST(tabs + 1)
-			if (iterCount < children.size - 1) println("$prefix\t,")
-			iterCount++
-		}
-		if (children.size > 0) println(prefix.toString() + ")")
+		FunctionFinder.FindASTPrintFunction(keyword.toLowerCase()).invoke(PrintASTFunctionFactoryObject, this, tabs)
 	}
 
 }
