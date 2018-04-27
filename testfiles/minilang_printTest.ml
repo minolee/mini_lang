@@ -1,8 +1,5 @@
 declaration: a, b, c
 //expr print test
-fun x(a,b,c)
-    return a+b+c
-
 a := 1*2+3/4==5<c+x(1,2,3)
 
 //if statement test
@@ -14,3 +11,8 @@ fi
 //concurrent statement test
 a,b := b,a
 
+//complex test
+do
+    b >= 12 + x(b) -> print(x(1+2+x(3,5),b))
+|   a < 3%4+5+-6 -> abort
+od
