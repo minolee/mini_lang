@@ -43,15 +43,22 @@ class PrintFunctionFactory
 		val prefix = StringBuilder()
 		for (i in 0..tabs) prefix.append("\t")
 		print("$prefix(")
-		print(":=")
+		println(":=")
 		//TODO 하나의 pair마다 할건지, 한번에 몰아서 보여줄건지 결정해야 함
-
+		val lhs = k.children.subList(0, k.children.size / 2)
+		val rhs = k.children.subList(k.children.size / 2, k.children.size)
+		for(i in 0 until lhs.size)
+		{
+			println("$prefix\t(")
+			lhs[i].printAST(tabs+2)
+			println("$prefix\t\t,")
+			rhs[i].printAST(tabs+2)
+			println("$prefix\t)")
+		}
+		println("$prefix)")
 	}
 
-	fun assign_expr(k: Keyword, tabs: Int)
-	{
 
-	}
 
 	fun case(k:Keyword, tabs: Int)
 	{

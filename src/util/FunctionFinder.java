@@ -2,7 +2,6 @@ package util;
 
 import interpreter.InterpretFunctionFactory;
 import interpreter.ScopeGeneratorFunctionFactory;
-import kotlin.reflect.jvm.internal.impl.builtins.KotlinBuiltIns;
 import parser.PrintFunctionFactory;
 import parser.ReduceFunctionFactory;
 import structure.Keyword;
