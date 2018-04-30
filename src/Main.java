@@ -19,27 +19,17 @@ class Main
     public static void main(String[] args) throws IOException, ScannerException, ParseException
     {
 	    Scanner s = Scanner.readKeywords(language_definition_dir + minilang_prefix + "keywords");
-//        for(Keyword word : s.scan(new File(test_file_dir+ minilang_prefix + "scannerTest.ml")))
-//        {
-//            System.out.println(word.toString());
-//        }
+
         Parser p = Parser.GenerateParser(new File(language_definition_dir+minilang_prefix+"grammar_test"));
 
-//        p.grammar.forEach((k, v) ->
-//		{
-//			for(ProductionRule pe : v)
-//			{
-//				System.out.println(pe);
-//			}
-//		});
 		File f = null;
 		System.out.println(args.length);
 		if(args.length > 0)
 			f = new File(args[0]);
-		else f = new File(test_file_dir+minilang_prefix+"printTest.ml");
+		else
+			f = new File(test_file_dir+minilang_prefix+"printTest.ml");
         Keyword root = p.parse(f, s);
 
-//        System.out.println(FunctionFinder.FindParseFunctionByName("case"));
         Interpreter i = Interpreter.GenerateInterpreter(root);
 
 		i.getRoot().printAST(0);

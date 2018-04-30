@@ -13,6 +13,6 @@ a,b := b,a
 
 //complex test
 do
-    b >= 12 + x(b) -> print(x(1+2+x(3,5),b))
+    b >= 12 + x(b) -> if c > 1 -> c := c + 1 | c < 1 -> skip fi
 |   a < 3%4+5+-6 -> abort
 od
