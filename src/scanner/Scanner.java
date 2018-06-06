@@ -21,7 +21,7 @@ public class Scanner
 		keywords = new ArrayList<>();
 	}
 
-	public static Scanner readKeywords(String fileName)
+	public static Scanner GenerateScannerFromKeywords(String fileName)
 	{
 		Scanner c = new Scanner();
 		List<Automaton<Character>> result = new ArrayList<>();

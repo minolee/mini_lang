@@ -28,6 +28,9 @@ fun sort(x, y, z, w)
     //return x, y, z, w // not sure if array types will be supported
 }
 
+x := random(10)
+print(x)
+
 if
     x(1, 2) > 3 -> x := 4
 |   1 < 2 -> x := 2

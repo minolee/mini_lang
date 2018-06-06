@@ -47,6 +47,10 @@ class ProgramNode
 					node.children.forEach { params[it.strValue!!] = ProgramValue.DummyValue() }
 					paramNames.addAll(node.children.map { it.strValue!! })
 				}
+				if (node.keyword == "ID_DECLARATION")
+				{
+					node.children.forEach { scope[it.strValue!!] = ProgramValue.DummyValue() }
+				}
 			}
 		}
 
@@ -64,7 +68,7 @@ class ProgramNode
 			}
 			try
 			{
-				interpret()
+				return interpret()
 			}
 			catch (e: ProgramException)
 			{
@@ -72,15 +76,12 @@ class ProgramNode
 				{
 					return e.returnValue
 				}
+				throw e
 			}
-			return null
 		}
 
-		override fun get(key: String): ProgramValue?
-		{
-			if (scope[key] != null) return scope[key]
-			return params[key]
-		}
+		override fun get(key: String): ProgramValue? = scope[key] ?: params[key]
+
 
 		override fun set(key: String, v: ProgramValue?)
 		{

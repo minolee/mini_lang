@@ -79,7 +79,14 @@ class InterpretFunctionFactory
 
 	fun print_expr(k: Keyword)
 	{
-		println(k.children[0].interpret()!!)
+		if(k.children.size > 0)
+			println(k.children[0].interpret()!!)
+		else println()
+	}
+
+	fun random_expr(k: Keyword): ProgramValue?
+	{
+		return ProgramValue(java.lang.Math.random() * k.children[0].interpret()!!.value.toDouble())
 	}
 
 	fun expr(k: Keyword): ProgramValue? = pass(k)
@@ -98,7 +105,8 @@ class InterpretFunctionFactory
 		"ID" -> findId(k.children[0])
 				?: throw ProgramException(ProgramException.ExceptionType.FREE_VARIABLE, k.children[0].strValue!!)
 		"NUMBER" -> if (k.children[0].keywordType == "Int") ProgramValue(k.children[0].intValue!!) else ProgramValue(k.children[0].floatValue!!)
-		"INVOKE_EXPR" -> k.children[0].interpret()
+		"RANDOM_EXPR", "INVOKE_EXPR" -> k.children[0].interpret()
+
 		else -> throw Exception("base_case: ${k.children[0].keyword}")
 	}
 
@@ -113,11 +121,10 @@ class InterpretFunctionFactory
 		return function.copy().interpret(args)
 	}
 
-	fun return_expr(k: Keyword): Nothing
+	fun return_expr(k: Keyword)
 	{
 		val ex = ProgramException(ProgramException.ExceptionType.RETURN)
-		val result = k.children[1].interpret()
-		ex.returnValue = result
+		ex.returnValue = if (k.children.size > 0) k.children[0].interpret() else null
 		throw ex //거의 longjmp
 	}
 
@@ -135,7 +142,7 @@ class InterpretFunctionFactory
 	{
 		val op = k.children[0].keyword
 		val right = k.children[1].interpret()!!
-		if(!left.declared || !right.declared) throw Exception("Undeclared")
+		if (!left.declared || !right.declared) throw Exception("Undeclared")
 		//3번째 element도 고려해야 해!
 		val x: ProgramValue = when (op)
 		{
@@ -185,4 +192,6 @@ class InterpretFunctionFactory
 		}
 		while (current.parent != current)
 	}
+
+
 }

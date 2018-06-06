@@ -96,13 +96,19 @@ class ReduceFunctionFactory
 		return findAndAddAll(context, "EXPR").forEach(k::addChild)
 	}
 
+	fun random_expr(k: Keyword, context: List<Keyword>)
+	{
+		k.surface = "RANDOM_EXPR"
+		return findAndAddAll(context, "EXPR").forEach(k::addChild)
+	}
+
 	fun base_case(k: Keyword, context: List<Keyword>)
 	{
 		for (node in context)
 		{
 			when (node.keyword)
 			{
-				"EXPR", "ID", "NUMBER", "INVOKE_EXPR" -> k.addChild(node)
+				"EXPR", "ID", "NUMBER", "INVOKE_EXPR", "RANDOM_EXPR" -> k.addChild(node)
 			}
 		}
 	}
